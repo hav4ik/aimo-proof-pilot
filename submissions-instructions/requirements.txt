@@ -1,0 +1,16 @@
+pandas
+polars
+numpy
+pyarrow
+datasets
+transformers==5.9.0
+accelerate==1.13.0
+safetensors
+rich
+typer>=0.21.1
+click>=8.4.1
+peft
+bitsandbytes
+wandb
+huggingface_hub>=1.18.0
+boto3

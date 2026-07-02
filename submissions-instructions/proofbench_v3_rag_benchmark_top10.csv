@@ -1,0 +1,936 @@
+query_index,problem_id,rank,source_id,source_row_id,cosine_score,rerank_score,query_problem,retrieved_question,retrieved_solution
+1,PB-Advanced-001,1,imo-sl-15-1992,646,0.5501997470855713,0.235952400202534,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","Does there exist a set $M$ with the following properties?
+
+(i) The set $M$ consists of $1992$ natural numbers.
+(ii) Every element in $M$ and the sum of any number of elements of $M$ have the form $m^k$, where $m,k\in\mathbb N$ and $k\ge2$.","Yes. We use the following lemma: for every $N\in\mathbb N$ there exists a natural number $d$ such that all numbers
+\[
+d,2d,\ldots,Nd
+\]
+are perfect powers.
+
+To prove the lemma, choose distinct primes $p_1,\ldots,p_N$ and write
+\[
+d=2^{\alpha_2}3^{\alpha_3}\cdots N^{\alpha_N}.
+\]
+Choose the exponents by the Chinese remainder theorem so that, for each $j$, the exponent of every prime in $jd$ is divisible by $p_j$. Then $jd$ is a perfect $p_j$-th power.
+
+Now take
+\[
+N=\frac{1992\cdot1993}{2}.
+\]
+By the lemma, choose $d$ such that every $td$ with $1\le t\le N$ is a perfect power, and set
+\[
+M=\{d,2d,\ldots,1992d\}.
+\]
+Every subset sum of $M$ equals $td$ for some $1\le t\le N$, so every element and every sum of elements has the required form."
+1,PB-Advanced-001,2,imo-sl-15-1995,735,0.5411890745162964,0.16280552511342444,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","Let $k$ be a positive integer. Prove that there are infinitely many perfect squares of the form $n^{2^k}-7$, where $n$ is a positive integer.","It suffices to construct, for every $k$, a positive integer $a_k$ with $a_k^2\equiv -7\pmod{2^k}$, because then every $n=a_k+r2^k$ gives $n^2\equiv -7\pmod{2^k}$ and hence infinitely many $n$ with $n^{2^k}-7$ square. For $k=1,2,3$ take $a_k=1$. If $a_k^2\equiv-7\pmod{2^k}$ for $k>3$, either this already holds mod $2^{k+1}$, or $a_k^2\equiv2^k-7\pmod{2^{k+1}}$; in the latter case set $a_{k+1}=a_k+2^{k-1}$, which flips the residue by $2^k$ since $a_k$ is odd."
+1,PB-Advanced-001,3,imo-sl-30-1989,553,0.5880113840103149,0.15942668707801672,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","For which positive integers $n$ does there exist a positive integer $N$ such that none of $N+1,N+2,\ldots,N+n$ is a power of a prime number?","Every positive integer $n$ works. One construction is $N=(n+1)!^2+1$. For $1\le j\le n$, the number $j+1$ is a proper divisor of $N+j=(n+1)!^2+j+1$. If $N+j=p^m$ were a prime power, then $j+1=p^r$ for some $1\le r<m$; but then $p^{r+1}$ divides both $(n+1)!^2=N-1$ and $p^m=N+j$, forcing $p^{r+1}\mid j+1$, impossible. Hence none of $N+1,\ldots,N+n$ is a prime power. A CRT construction with pairs of distinct prime divisors gives another proof."
+1,PB-Advanced-001,4,imo-5-1989,560,0.5880113840103149,0.15942668707801672,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","For which positive integers $n$ does there exist a positive integer $N$ such that none of $N+1,N+2,\ldots,N+n$ is a power of a prime number?","Every positive integer $n$ works. One construction is $N=(n+1)!^2+1$. For $1\le j\le n$, the number $j+1$ is a proper divisor of $N+j=(n+1)!^2+j+1$. If $N+j=p^m$ were a prime power, then $j+1=p^r$ for some $1\le r<m$; but then $p^{r+1}$ divides both $(n+1)!^2=N-1$ and $p^m=N+j$, forcing $p^{r+1}\mid j+1$, impossible. Hence none of $N+1,\ldots,N+n$ is a prime power. A CRT construction with pairs of distinct prime divisors gives another proof."
+1,PB-Advanced-001,5,imo-sl-24-2004,1052,0.5549976825714111,0.1561048974454574,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","Let $\tau(n)$ be the number of positive divisors of $n$. Prove that there are infinitely many positive integers $a$ for which the equation
+\[
+\tau(an)=n
+\]
+has no positive integer solution $n$.","Put $m=an$. Then $\tau(an)=n$ is equivalent to $m/\tau(m)=a$. For every prime $p>3$, take $a=p^{p-1}$. If $m=p^{p-1}\tau(m)$, write $m=p^\alpha k$ with $p\nmid k$ and $\alpha\ge p-1$. Then
+\[
+p^{\alpha-p+1}k=(\alpha+1)\tau(k).
+\]
+One cannot have $\alpha=p-1$, and for $\alpha\ge p$ the $p$-adic divisibility forces $p\mid\tau(k)$. Thus some prime exponent of $k$ is at least $p-1$, giving $k\ge2^{p-1}\tau(k)/p$. Combined with $p^{\alpha-p+1}\ge p(\alpha+1)/(p+1)$, this makes the left side strictly larger than $(\alpha+1)\tau(k)$, a contradiction. Hence every $a=p^{p-1}$ with prime $p>3$ works, providing infinitely many."
+1,PB-Advanced-001,6,imo-sl-6-1997,796,0.5569337606430054,0.14804719803168948,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","(a) Let $n$ be a positive integer. Prove that there exist distinct positive integers $x,y,z$ such that
+\[
+x^{n-1}+y^n=z^{n+1}.
+\]
+(b) Let $a,b,c$ be positive integers such that $a$ and $b$ are relatively prime and $c$ is relatively prime either to $a$ or to $b$. Prove that there exist infinitely many triples $(x,y,z)$ of distinct positive integers such that
+\[
+x^a+y^b=z^c.
+\]","For part (a), one explicit construction is
+\[
+x=2^{n^2}3^{n+1},\qquad y=2^{n^2-n}3^n,\qquad z=2^{n^2-2n+2}3^{n-1},
+\]
+which gives distinct positive integers and satisfies the displayed equation by comparing prime powers. For part (b), seek solutions of the form $x=p^m$, $y=p^n$, $z=qp^r$. It is enough to choose integers with $ma-1=nb=rc$ and then a prime power relation $q^c=p+1$. The relative-primality hypotheses allow these congruences to be solved for infinitely many choices of $p$ and the exponents, giving infinitely many distinct triples."
+1,PB-Advanced-001,7,imo-sl-2007-12,1093,0.5878492593765259,0.14647750886173394,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","Determine the number of pairs \((b, n)\) of integers with \(1 < b \le 1000\) and \(n > 1\) such that for every integer \(k > 1\), there exists an integer \(a\) (which may depend on \(k\)) satisfying the congruence \(b \equiv a^n \pmod{k}\).","The condition that for every integer \(k > 1\) there exists an integer \(a\) with \(b \equiv a^n \pmod{k}\) is equivalent to requiring that \(b\) is an \(n\)-th power in the ring of \(p\)-adic integers for every prime \(p\). This forces the exponent of each prime in the factorization of \(b\) to be divisible by \(n\). Consequently, \(b\) must be a perfect \(n\)-th power, i.e., \(b = c^n\) for some integer \(c > 1\) (since \(b > 1\)). Conversely, if \(b = c^n\), then taking \(a = c\) works for all \(k\). Hence the problem reduces to counting pairs \((b, n)\) with \(2 \le b \le 1000\), \(n > 1\), and \(b = a^n\) for some integer \(a\).
+
+Counting such pairs is straightforward: for each integer base \(a \ge 2\), let \(n\) run over integers \(\ge 2\) such that \(a^n \le 1000\). Summing over \(a\) gives the total.
+
+- \(a = 2\): \(2^2\) through \(2^9\) are \(\le 1000\) → \(n = 2,\dots,9\) → \(8\) pairs.
+- \(a = 3\): \(3^2\) through \(3^6\) → \(5\) pairs.
+- \(a = 4\): \(4^2\) through \(4^4\) → \(3\) pairs.
+- \(a = 5\): \(5^2\) through \(5^4\) → \(3\) pairs.
+- \(a = 6\): \(6^2, 6^3\) → \(2\) pairs.
+- \(a = 7\): \(7^2, 7^3\) → \(2\) pairs.
+- \(a = 8\): \(8^2, 8^3\) → \(2\) pairs.
+- \(a = 9\): \(9^2, 9^3\) → \(2\) pairs.
+- \(a = 10\): \(10^2, 10^3\) → \(2\) pairs.
+- \(a = 11\) through \(31\): only squares are \(\le 1000\) → \(1\) pair each.
+
+Adding these contributions yields \(8 + 5 + 3 + 3 + 2 + 2 + 2 + 2 + 2 + 21 \times 1 = 8+5=13, +3=16, +3=19, +2=21, +2=23, +2=25, +2=27, +2=29, +21=50\). Thus there are \(50\) pairs.
+
+\[
+\boxed{50}
+\]"
+1,PB-Advanced-001,8,imo-sl-15-1997,805,0.5375906825065613,0.14647750886173394,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.",An infinite arithmetic progression whose terms are positive integers contains the square of an integer and the cube of an integer. Show that it contains the sixth power of an integer.,"Write the progression as $a+bt$ and argue by induction on $b$. The case $b=1$ is trivial. If $b=p^m$, then either $p^m\mid a$, in which case divisibility reduces the problem, or $(a,p)=1$, in which case the given square and cube congruences modulo $p^m$ imply, by taking inverses in the unit group, that a sixth-power residue occurs in the progression. If $b=b_1b_2$ with $(b_1,b_2)=1$, the induction hypothesis gives sixth powers in the progressions modulo $b_1$ and modulo $b_2$. The Chinese remainder theorem provides $z$ satisfying the two residue conditions, and then $z^6$ lies in the original progression."
+1,PB-Advanced-001,9,imo-sl-23-1994,713,0.5727330446243286,0.14185106490048777,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","N6 (LAT). Let $x_1$ and $x_2$ be relatively prime positive integers. For $n\ge2$, define
+\[
+x_{n+1}=x_nx_{n-1}+1.
+\]
+(a) Prove that for every $i>1$, there exists $j>i$ such that $x_i^i$ divides $x_j^j$.
+(b) Is it true that $x_1$ must divide $x_j^j$ for some $j>1$?","(a) Fix $i>1$ and a prime $p\mid x_i$. Work modulo $p$, writing $u_j\equiv x_j\pmod p$. Then
+\[
+u_{j+1}\equiv u_ju_{j-1}+1\pmod p,
+\]
+with $u_i=0$ and $u_{i+1}=1$. The finite sequence of pairs $(u_j,u_{j+1})$ is eventually periodic. A first-period argument shows that some positive period $d_p$ returns to the pair $(0,1)$, so $p\mid x_{i+d_p}$. Let $d$ be the least common multiple of these periods over all primes $p\mid x_i$. Then every prime divisor of $x_i$ divides $x_{i+kd}$ for all $k\ge1$. Choosing $k$ large enough makes the prime-power exponents in $x_{i+kd}^{i+kd}$ at least those in $x_i^i$, hence $x_i^i\mid x_j^j$ for $j=i+kd$.
+
+(b) No. Take $x_1=22$ and $x_2=9$. Then $x_n$ is even exactly when $n\equiv1\pmod3$. Modulo $11$, the sequence begins
+\[
+0,9,1,10,0,1,1,2,3,7,0,\ldots,
+\]
+and $11\mid x_n$ for $n>1$ exactly when $n\equiv5\pmod6$. These congruence conditions are incompatible, so no $x_n$ with $n>1$ is divisible by both $2$ and $11$. Hence $22\nmid x_j^j$ for all $j>1$."
+1,PB-Advanced-001,10,imo-sl-2022-20,1434,0.5815088152885437,0.1388349935473071,"For a positive integer $n$, let $A_{n}$ be the number of perfect powers less than or equal to $n$. Here, a perfect power is a number that can be expressed in the form $a^{b}$, where $a$ is a positive integer and $b$ is an integer greater than or equal to 2. Prove that there are infinitely many $n$ such that $A_{n}$ divides $n+2024$.","For a positive integer $n$, define $f(n) = 1 + \lfloor \log_2 n \rfloor$. Find the sum of all integers $n$ with $1 \le n \le 2024$ such that $f(n)$ divides $n$. Give your answer modulo $99991$.","The sum of all integers \(n\) with \(1 \le n \le 2024\) such that \(f(n) = 1 + \lfloor \log_2 n\rfloor\) divides \(n\) is \(193353\). Modulo \(99991\), the remainder is \(93362\).
+
+\[
+\boxed{93362}
+\]"
+2,PB-Advanced-002,1,imo-sl-10-1988,496,0.5686772465705872,0.20181322226037884,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","For $N=\{1,\ldots,n\}$, a family of subsets is separating if every pair is separated by one member, and covering if every element belongs to a member. Find the least number $f(n)$ of subsets in a family that is both separating and covering.","Label each element by its membership word in $\{0,1\}^t$. Separation requires all words to be distinct, and covering excludes the all-zero word. Thus $n\le2^t-1$, so $t\ge\lceil\log_2(n+1)\rceil$. Conversely choose any $n$ distinct nonzero binary words of that length and let $A_i$ contain exactly the elements whose $i$th bit is $1$. This family covers and separates. Therefore $$f(n)=\lceil\log_2(n+1)\rceil=\lfloor\log_2 n\rfloor+1.$$"
+2,PB-Advanced-002,2,imo-sl-2014-5,1241,0.5258890390396118,0.13587289700909427,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","Consider the set of all subsets of $\{1,2,3,4,5\}$. There are $32$ such subsets. For each subset $X$, define its *partner* as $X \triangle \{1\}$ (the symmetric difference with $\{1\}$). Note that each subset is paired with its partner, forming $16$ disjoint pairs. 
+How many ways are there to choose exactly one subset from each of the $16$ pairs such that the symmetric difference (XOR) of all chosen subsets is exactly $\{1\}$?","The pairs are given by \(X \leftrightarrow X \triangle \{1\}\). Each pair can be indexed by a subset \(Y \subseteq \{2,3,4,5\}\): the pair is \((Y,\; Y\cup\{1\})\). There are \(2^4 = 16\) such pairs. Choosing exactly one subset from each pair is equivalent to choosing, for each \(Y\), whether to take \(Y\) (call this \(c_Y = 0\)) or \(Y\cup\{1\}\) (call this \(c_Y = 1\)).
+
+Let the chosen subsets be \(S_Y\). Their symmetric difference (XOR) is computed over GF(2) on the characteristic vectors. For each element \(j \in \{2,3,4,5\}\), the contribution is the XOR over all \(Y\) of the indicator that \(j \in Y\). Since the set of all \(Y\) runs over all subsets of a 4‑element set, exactly \(2^{3}=8\) of them contain a given \(j\), an even number. Hence the XOR for each of these elements is \(0\). For element \(1\), the contribution is the XOR over all \(Y\) of \(c_Y\). Therefore the XOR of all chosen subsets equals \(\{1\}\) if and only if
+
+\[
+\bigoplus_{Y \subseteq \{2,3,4,5\}} c_Y = 1,
+\]
+
+i.e., the number of \(Y\) for which \(c_Y = 1\) is odd.
+
+There are \(16\) independent binary choices \(c_Y\). Exactly half of the \(2^{16}\) possible assignments have odd parity. Thus the number of ways is
+
+\[
+\frac{2^{16}}{2} = 2^{15} = 32768.
+\]
+
+\[
+\boxed{32768}
+\]"
+2,PB-Advanced-002,3,imo-ll-29-1977,202,0.5426733493804932,0.13010847436299786,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ",Let $B$ be a set of $k$ sign sequences of length $n$. The product of two sequences is taken componentwise. Prove that there exists a sign sequence $c$ such that $B\cap cB$ contains at most $k^2/2^n$ sequences.,"Consider all $k^2$ products $ab$ with $a,b\in B$. They are distributed among the $2^n$ sign sequences, so some $c$ occurs at most $k^2/2^n$ times. But $b\in B\cap cB$ exactly when $b=ca$ for some $a\in B$, i.e. when $ab=c$ in componentwise notation. Therefore this $c$ has the required property."
+2,PB-Advanced-002,4,imo-sl-25-2002,987,0.5421470403671265,0.13010847436299786,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ",Let $r\ge2$ and let $\mathcal F$ be an infinite family of pairwise intersecting $r$-element sets. Prove that some set of size $r-1$ meets every member of $\mathcal F$.,"Suppose no set of size below $r$ meets every member. Start with the empty set $A$, which is contained in infinitely many members. If $|A|<r$, choose $B\in\mathcal F$ disjoint from $A$. Every one of the infinitely many members containing $A$ meets the finite set $B$, so one element $b\in B$ belongs to infinitely many of them. Then $A\cup\{b\}$ is contained in infinitely many members. Repeating produces an $r$-element set contained in infinitely many distinct $r$-sets, impossible. Thus some $A$ of size at most $r-1$ is a transversal; enlarge it if necessary."
+2,PB-Advanced-002,5,imo-sl-16-1979,266,0.5126276016235352,0.12455335818741645,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","Let $K=\{a,b,c,d,e\}$. A collection $F$ consists of 16 different subsets of $K$, and any three members of $F$ have at least one element in common. Prove that all 16 members of $F$ have exactly one common element.","No two members can be complements. If a singleton belongs to $F$, then every member contains its element. If two different two-element sets occur, they must meet, and their common element must lie in every member. Otherwise at most one two-element set occurs; since there are only six subsets of size greater than $3$, at least nine of the ten three-element subsets are in $F$. Then, for example, three suitable three-subsets have empty intersection, contradiction. Hence all members share one common element."
+2,PB-Advanced-002,6,imo-sl-2007-11,1092,0.5324764847755432,0.12185285076961803,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","Let \(\alpha = 0.38\). For positive integers \(m\) and \(k\), set \(n = mk\). Consider a partition of the set \(\{1,2,\dots,n\}\) into \(k\) disjoint subsets \(A_1, A_2, \dots, A_k\), each of size \(m\). Define two families of subsets of \(\{1,2,\dots,n\}\):
+
+- \(\mathcal{S} = \{ X \subseteq \{1,2,\dots,n\} : \text{ for every } i = 1,\dots,k,\ X \cap A_i \neq \varnothing \}\).
+- \(\mathcal{T} = \{ Y \subseteq \{1,2,\dots,n\} : \text{ there exists } i \text{ such that } A_i \subseteq Y,\ \text{ but } Y \notin \mathcal{S} \}\).
+
+Let \(|\mathcal{S}|\) and \(|\mathcal{T}|\) denote the number of sets in \(\mathcal{S}\) and \(\mathcal{T}\), respectively.
+
+Determine the smallest positive integer \(m\) for which there exists a positive integer \(k\) such that both \(|\mathcal{S}| > \alpha \cdot 2^n\) and \(|\mathcal{T}| > \alpha \cdot 2^n\). For that \(m\), let \(k\) be the smallest such integer. Compute \(|\mathcal{S}|\) modulo \(99991\).","The smallest positive integer \(m\) for which there exists a positive integer \(k\) such that both \(|\mathcal{S}| > 0.38 \cdot 2^n\) and \(|\mathcal{T}| > 0.38 \cdot 2^n\) is \(m = 7\). The smallest such \(k\) is \(123\). For these values, \(|\mathcal{S}| = (2^7 - 1)^{123} = 127^{123}\). Computing \(127^{123} \mod 99991\) yields \(72290\).
+
+\[
+\boxed{72290}
+\]"
+2,PB-Advanced-002,7,imo-sl-20-2002,982,0.5589627623558044,0.12052160153571954,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","Let $A$ be a nonempty set of positive integers. Suppose positive integers $b_i,c_i$ satisfy $b_iA+c_i\subset A$, and the sets $b_iA+c_i$ are pairwise disjoint. Prove $\sum_i1/b_i\le1$.","Assume the sum exceeds $1$ and write $f_i(x)=b_ix+c_i$. Distinct compositions of the $f_i$ take distinct values on any $a\in A$, by pairwise disjointness. Choose $d_i>b_i$ with $\sum1/d_i>1$. For large $a$, every length-$N$ composition using $f_i$ exactly $k_iN$ times is at most $(d_1^{k_1}\cdots d_n^{k_n})^Na$, yet their number is the corresponding multinomial coefficient. Its exponential growth forces $d_1^{k_1}\cdots d_n^{k_n}\ge1/(k_1^{k_1}\cdots k_n^{k_n})$. Taking $k_id_i$ equal gives $\sum1/d_i\le1$, contradiction."
+2,PB-Advanced-002,8,imo-sl-21-1988,507,0.5437024831771851,0.11279540628289322,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","Forty-nine students each receive three integer scores from $0$ to $7$. Prove that two students $A,B$ can be chosen so that $A$ scores at least as much as $B$ on every problem.","Order triples coordinatewise. It suffices to prove that an antichain in $\{0,\ldots,7\}^3$ has at most $48$ elements. Group triples into levels $X_j$ according to the sum of their coordinates. For $j<10$, every $m$ elements of $X_j$ have at least $m$ distinct successors in $X_{j+1}$; for $j>10$ the dual predecessor statement holds. This follows by splitting a level according to the minimum distance of a coordinate from $0$ or $7$ and double-counting adjacent pairs. Repeatedly replace low-level antichain elements by successors and high-level ones by predecessors. Size does not decrease, and eventually the antichain lies in $X_{10}$, which has exactly $48$ elements. Thus $49$ triples cannot form an antichain, proving the claim."
+2,PB-Advanced-002,9,imo-sl-18-1979,268,0.5151946544647217,0.11279540628289322,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","Given positive integers $a_1,
+\ldots,a_m$, prove that there exist fewer than $2^m$ positive integers $b_1,
+\ldots,b_n$ such that all sums of distinct $b_k$ are distinct and every $a_i$ occurs among these sums.","Write all $a_i$ in binary. For each subset $S\subseteq\{1,
+\ldots,m\}$, let $b(S)$ be the integer whose binary ones occur exactly in those positions where the $a_i$ with $i\in S$ all have a $1$ and all other $a_i$ have a $0$. Some $b(S)$, including possibly $b(\emptyset)$, are zero, so fewer than $2^m$ positive numbers remain. Their binary supports are disjoint, so all subset sums are distinct, and each $a_i$ is the sum of the positive $b(S)$ with $i\in S$."
+2,PB-Advanced-002,10,imo-sl-12-1979,262,0.5146768093109131,0.11279540628289322,"There are 120 students in DeepMind highschool, and each student `loves' some of the students. Here `love' is not always a mutual relationship; a student A may love B while B may not love A, and it is also possible that a student loves oneself. For the set $F$ of all $2^{120}$ subsets of the students, define the function $f: F \rightarrow F$ as the function that maps each $X \in F$ to the set of students loved by one or more students in $X$. For $A, B \in F$, $A$ and $B$ are said to have a 'lovely relationship' iff there exists a natural number $k$ such that $f^{k}(A)=B$. Now we want to select distinct elements $A_{1}, A_{2}, \cdots A_{t}$ from $F$ such that for any $1 \leq i<j \leq t$, $A_{i}$ and $A_{j}$ have a lovely relationship. Let $M(f)$ be the maximum possible value of $t$.  Show that $M(f) \leq 2^{70}$. ","Let $R$ be a set of exactly six elements. A family $F$ of subsets of $R$ is an $S$-family if no two members contain one another, the union of any three members is not $R$, and the union of all members is $R$. Determine the maximum possible value of $|F|$.","The maximum is $11$. If a member has size $1$, all other members lie in the remaining five-element set and form an antichain; by Sperner's theorem there are at most ${5\choose2}=10$ of them, and this is attainable by taking the singleton together with all two-subsets of the remaining five elements. Other cases give at most $10$: sizes $5$ or $4$ force too few sets, size $3$ gives at most $10$ by considering complements in the remaining three elements, and all size-$2$ families lose one from every complementary triple. Thus $h=11$."
+3,PB-Advanced-003,1,imo-sl-3-1993,661,0.6167502403259277,0.24857066528506097,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","Consider triangle $ABC$, its circumcircle $k$ with center $O$ and radius $R$, and its incircle with center $I$ and radius $r$. Another circle $k_c$ is tangent to the sides $CA,CB$ at $D,E$, respectively, and is internally tangent to $k$. Show that the incenter $I$ is the midpoint of $DE$.","Let $O_1$ and $\rho$ be the center and radius of $k_c$. Then $C,I,O_1$ are collinear and $CI/CO_1=r/\rho$. Applying Stewart's theorem to $\triangle OCO_1$ at $I$, then substituting $OO_1=R-\rho$, $OC=R$, and Euler's formula $OI^2=R^2-2Rr$, gives $CI\cdot IO_1=r\rho$. Equivalently $CO_1\cdot IO_1=\rho^2=DO_1^2$. Thus triangles $CO_1D$ and $DO_1I$ are similar, so $\angle DIO_1=90^\circ$. Since $CD=CE$ and $CO_1$ bisects $\angle C$, the line $CO_1$ is perpendicular to and bisects $DE$; therefore $I$ is the midpoint of $DE$."
+3,PB-Advanced-003,2,imo-sl-9-1997,799,0.6445866823196411,0.23934934732271163,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","Let $A_1A_2A_3$ be a nonisosceles triangle with incenter $I$. Let $C_i$, $i=1,2,3$, be the smaller circle through $I$ tangent to $A_iA_{i+1}$ and $A_iA_{i+2}$, where indices are taken modulo $3$. Let $B_i$, $i=1,2,3$, be the second point of intersection of $C_{i+1}$ and $C_{i+2}$. Prove that the circumcenters of the triangles $A_1B_1I$, $A_2B_2I$, and $A_3B_3I$ are collinear.","Let $O_i$ be the center of $C_i$, $T_i$ its tangency point on the corresponding angle side, and $R_i$ the circumcenter of $A_iB_iI$. For each $i$, the line $O_{i+1}O_{i+2}$ is the perpendicular bisector of $IB_i$, so it contains $R_i$. A second perpendicular-bisector relation gives $R_i\in T_{i+1}T_{i+2}$. Since the three lines $T_iO_i$ are concurrent at $I$, Desargues' theorem applied to the triangles $(T_1,T_2,T_3)$ and $(O_1,O_2,O_3)$ implies that the three intersection points $R_1,R_2,R_3$ are collinear."
+3,PB-Advanced-003,3,imo-sl-14-1999,876,0.6348695755004883,0.235952400202534,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","G8 (RUS). Points $A,B,C$ divide the circumcircle $\Omega$ of triangle $ABC$ into three arcs. Let $X$ be a variable point on arc $AB$, and let $O_1,O_2$ be the incenters of triangles $CAX$ and $CBX$. Prove that the circumcircle of triangle $XO_1O_2$ intersects $\Omega$ in a fixed point.","Let $P$ be the midpoint of the arc $AB$ of $\Omega$ not containing $C$. Since $O_1$ and $O_2$ are incenters, the angles made by $XO_1$ and $XO_2$ with $XP$ equal fixed half-sums of the arcs cut off by $A,B,C$. Thus $\angle XO_1P=\angle XO_2P$, so $P,O_1,O_2,X$ are concyclic. The second intersection with $\Omega$ is always $P$."
+3,PB-Advanced-003,4,imo-sl-25-1997,815,0.6231957674026489,0.2099876265736025,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","The bisectors of angles $A,B,C$ of a triangle $ABC$ meet its circumcircle again at $K,L,M$, respectively. Let $R$ be an internal point on side $AB$. Points $P$ and $Q$ are defined by: $RP\parallel AK$ and $BP\perp BL$; $RQ\parallel BL$ and $AQ\perp AK$. Show that the lines $KP$, $LQ$, and $MR$ have a point in common.","Let $MR$ meet the circumcircle of $ABC$ again at $X$. We claim that $X$ is the common point. By symmetry it is enough to prove $X\in KP$. The points $X$ and $P$ lie on the same side of $AB$ as $K$. Let $I_a=AK\cap BP$, the $A$-excenter of triangle $ABC$. Then $\angle AI_aB=\gamma/2$, so
+\[
+\angle RPB=\angle AI_aB=\angle MCB=\angle RXB.
+\]
+Thus $R,B,P,X$ are concyclic. If $P$ and $K$ are on distinct sides of $BX$, then
+\[
+\angle RXP=180^\circ-\angle RBP=90^\circ-\beta/2=\angle MAK=180^\circ-\angle RXK,
+\]
+and the other case is analogous. Hence $K,X,P$ are collinear. Similarly $L,X,Q$ are collinear, so $KP$, $LQ$, and $MR$ concur at $X$."
+3,PB-Advanced-003,5,imo-4-1978,286,0.6177956461906433,0.20792148327471954,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","In triangle $ABC$ with $AB=AC$, a circle is tangent internally to the circumcircle of $ABC$ and tangent to $AB,AC$ at $P,Q$. Prove that the midpoint of $PQ$ is the incenter of $ABC$.","Let $O$ be the center of the smaller circle, $T$ its tangency point with the circumcircle, and $J$ the midpoint of $BC$. The configuration is symmetric about $AOJT$. The homothety centered at $A$ that sends $T$ to $J$ sends the small circle to the incircle, so it sends $O$ to the incenter. Since quadrilaterals $ABTC$ and $APOQ$ are similar, the same homothety sends $O$ to the midpoint of $PQ$. Therefore that midpoint is the incenter."
+3,PB-Advanced-003,6,imo-sl-12-1978,245,0.6177956461906433,0.20792148327471954,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","In triangle $ABC$ with $AB=AC$, a circle is tangent internally to the circumcircle of $ABC$ and tangent to $AB,AC$ at $P,Q$. Prove that the midpoint of $PQ$ is the incenter of $ABC$.","Let $O$ be the center of the smaller circle, $T$ its tangency point with the circumcircle, and $J$ the midpoint of $BC$. The configuration is symmetric about $AOJT$. The homothety centered at $A$ that sends $T$ to $J$ sends the small circle to the incircle, so it sends $O$ to the incenter. Since quadrilaterals $ABTC$ and $APOQ$ are similar, the same homothety sends $O$ to the midpoint of $PQ$. Therefore that midpoint is the incenter."
+3,PB-Advanced-003,7,imo-sl-21-1993,679,0.5653403997421265,0.18429726028236704,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","A circle $S$ is said to cut a circle $\Sigma$ diametrically if their common chord is a diameter of $\Sigma$. Let $S_A,S_B,S_C$ be three circles with distinct centers $A,B,C$. Prove that $A,B,C$ are collinear if and only if there is no unique circle $S$ cutting each of $S_A,S_B,S_C$ diametrically. Prove further that if more than one such circle exists, then all such circles pass through two fixed points, and locate these points in relation to $S_A,S_B,S_C$.","Let $S$ have center $O$ and radius $r$, and let the radii of $S_A,S_B,S_C$ be $r_A,r_B,r_C$. Cutting $S_A$ diametrically gives $OA^2+r_A^2=r^2$, and similarly for $B,C$. Thus the perpendicular projection of $O$ to each side of triangle $ABC$ is uniquely determined by differences such as $OB^2-OA^2=r_A^2-r_B^2$. If $A,B,C$ are not collinear, these three projections determine a unique $O$ and hence a unique $S$. If $A,B,C$ are collinear, the corresponding perpendicular lines are parallel; there is either no solution or a one-parameter family, never a unique solution. In the latter case the foot $O'$ of $O$ on line $ABC$ is fixed. If $X,Y$ are the intersections of $S$ with line $ABC$, then $O'X^2=O'A^2+r_A^2$, so $X,Y$ are fixed. Therefore every such circle passes through these two fixed points on the line of centers."
+3,PB-Advanced-003,8,imo-sl-10-2002,972,0.576125979423523,0.18335953996445678,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","Circles $S_1,S_2$ meet at $P,Q$. Points $A_1,B_1\in S_1\setminus\{P,Q\}$ are distinct; $A_1P,B_1P$ meet $S_2$ again at $A_2,B_2$, and $A_1B_1$ meets $A_2B_2$ at $C$. Prove that the circumcenters of $A_1A_2C$ lie on one fixed circle.","Let $O$ be the circumcenter of $A_1A_2C$, and $O_1,O_2$ the fixed centers of $S_1,S_2$. Angle chasing shows $Q$ lies on the circumcircle of $A_1A_2C$, hence $OA_1=OQ$. Since also $O_1A_1=O_1Q$, both $O,O_1$ lie on the perpendicular bisector of $A_1Q$, so $OO_1\perp A_1Q$. Similarly $OO_2\perp A_2Q$. Thus $$\angle O_2OO_1=180^\circ-\angle A_1QA_2=180^\circ-\angle O_1QO_2,$$ so $O$ lies on the fixed circle through $O_1,O_2,Q$."
+3,PB-Advanced-003,9,imo-sl-14-1986,444,0.6438044309616089,0.17150476997540087,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","The incircle of triangle $ABC$ touches $BC,CA,AB$ at $D,E,F$. Let $X,Y,Z$ be the midpoints of $EF,FD,DE$. Prove that the incenter and the circumcenters of triangles $XYZ$ and $ABC$ are collinear.","Let $I$ be the incenter. Tangent-length relations give $IX\cdot IA=IE^2$, and similarly $IY\cdot IB=IF^2$ and $IZ\cdot IC=ID^2$. Thus inversion in the incircle sends $A,B,C$ to $X,Y,Z$. Under an inversion centered at $I$, the centers of a circle and its image lie on one line through $I$ by symmetry about the line joining $I$ to the original center. Hence the two circumcenters and $I$ are collinear."
+3,PB-Advanced-003,10,imo-sl-11-1999,873,0.5814288854598999,0.16451646289656316,"Let $ ABC $ be an acute triangle which is not an isosceles.Let $ I $ be the incenter and let $ \omega $ be the circumcircle of $ABC$. Let the intersections of lines $ AI $, $ BI $, and $ CI $ with $ BC $, $ CA $, and $ AB $ be $ D $, $ E $, and $ F $ respectively. Also, let $ \omega_A $ be the circle that lies inside $\angle BAC$, tangent to lines $ AB $ and $ AC $, and internally tangent to the circumcircle $ \omega $ at $ T_A $. Similarly, define $ T_B $ and $ T_C $ for points $ B $ and $ C $ respectively. Prove that there exist two points $ X $ and $ Y $ such that the circumcircles of triangles $ ADT_A $, $ BET_B $, and $ CFT_C $ all pass through $ X $ and $ Y $.","G5 (FRA). Let $ABC$ be a triangle, $\Omega$ its incircle, and $\Omega_a,\Omega_b,\Omega_c$ three circles orthogonal to $\Omega$ passing through $B,C$; $A,C$; and $A,B$ respectively. The circles $\Omega_a,\Omega_b$ meet again in $C\prime$, and similarly define $B\prime,A\prime$. Prove that the radius of the circumcircle of $A\prime B\prime C\prime$ is half the radius of $\Omega$.","Invert in the incircle. Circles orthogonal to the incircle remain circles and the incidences through pairs of vertices become linear incidences in the contact triangle. In these coordinates the construction of $A',B',C'$ is the image of the contact triangle under a homothety of ratio $1/2$ on the circumcircle parameter. Therefore the circumradius of $A'B'C'$ is half the radius of the incircle."
+4,PB-Advanced-004,1,imo-sl-4-1984,380,0.5665040016174316,0.15775868701896992,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","Let $d$ be the sum of all diagonals of a convex $n$-gon, $n>3$, and $p$ its perimeter. Prove
+\[\frac{n-3}{2}<\frac dp<\frac12\left(\left\lfloor\frac n2\right\rfloor\left\lfloor\frac{n+1}2\right\rfloor-2\right).\]","For every diagonal $A_iA_j$, convexity gives
+\[A_iA_j+A_{i+1}A_{j+1}>A_iA_{i+1}+A_jA_{j+1}.\]
+Summing over all diagonals yields $2d>(n-3)p$. For the upper bound, each diagonal is shorter than either boundary path joining its endpoints. Sum these inequalities by cyclic distance. For odd and even $n$ separately, each side is counted exactly enough times to give
+\[2d<\left(\left\lfloor n/2\right\rfloor\left\lfloor(n+1)/2\right\rfloor-2\right)p.\]"
+4,PB-Advanced-004,2,imo-5-1984,401,0.5665040016174316,0.15775868701896992,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","Let $d$ be the sum of all diagonals of a convex $n$-gon, $n>3$, and $p$ its perimeter. Prove
+\[\frac{n-3}{2}<\frac dp<\frac12\left(\left\lfloor\frac n2\right\rfloor\left\lfloor\frac{n+1}2\right\rfloor-2\right).\]","For every diagonal $A_iA_j$, convexity gives
+\[A_iA_j+A_{i+1}A_{j+1}>A_iA_{i+1}+A_jA_{j+1}.\]
+Summing over all diagonals yields $2d>(n-3)p$. For the upper bound, each diagonal is shorter than either boundary path joining its endpoints. Sum these inequalities by cyclic distance. For odd and even $n$ separately, each side is counted exactly enough times to give
+\[2d<\left(\left\lfloor n/2\right\rfloor\left\lfloor(n+1)/2\right\rfloor-2\right)p.\]"
+4,PB-Advanced-004,3,imo-sl-2-1972,95,0.5908099412918091,0.1496307594633238,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","Given $3n$ points $A_1,\ldots,A_{3n}$ in the plane, no three of them collinear, prove that one can construct $n$ mutually disjoint triangles whose vertices are among the given points.","Use induction on $n$. The case $n=1$ is immediate. For $3n+3$ points, take an edge $A_1A_2$ of the convex hull and choose a point $A_k$ for which $\angle A_kA_1A_2$ is minimal among the remaining points. Then the line $A_1A_k$ separates $A_2$ from the other $3n$ points, so triangle $A_1A_2A_k$ has no other selected point in its interior and is disjoint from any triangle built from the remaining points. By the induction hypothesis the remaining $3n$ points can be partitioned into $n$ disjoint triangles, and together with $A_1A_2A_k$ this gives the required $n+1$ triangles."
+4,PB-Advanced-004,4,imo-sl-8-1991,603,0.5465379357337952,0.11660296916113938,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","Let $S$ be a set of $n$ points in the plane, no three of which are collinear. Prove that there exists a set $P$ containing $2n-5$ points with the following property: in the interior of every triangle whose three vertices are elements of $S$ lies a point that is an element of $P$.","Choose coordinates and label the points $P_i=(x_i,y_i)$ so that $x_1<x_2<\cdots<x_n$. Let $d>0$ be less than half the minimum distance from any point $P_i$ to any line through two other points of $S$. Define
+\[
+T=\{(x_i,y_i-d),(x_i,y_i+d): i=2,3,\ldots,n-1\}.
+\]
+This set has $2n-4$ points. For any triangle $P_kP_lP_m$ with $k<l<m$, one of $(x_l,y_l-d)$ and $(x_l,y_l+d)$ lies inside the triangle, by the choice of $d$. Thus $T$ has the required property. Now take a vertex $P_j$ of the convex hull of $S$ with $j\ne1,n$. One of the two points $(x_j,y_j\pm d)$ lies outside the convex hull of $S$ and therefore cannot lie in the interior of any triangle with vertices in $S$. Removing that point leaves a set of $2n-5$ points with the desired property."
+4,PB-Advanced-004,5,imo-sl-13-1975,147,0.50511634349823,0.11532154307399524,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","Let $A_0,A_1,\ldots,A_n$ be points in the plane such that $A_0A_1\le\frac12 A_1A_2\le\cdots\le\frac1{2^{n-1}}A_{n-1}A_n$ and $0<\angle A_0A_1A_2<\angle A_1A_2A_3<\cdots<\angle A_{n-2}A_{n-1}A_n<180^\circ$, all with the same orientation. Prove that the segments $A_kA_{k+1}$ and $A_mA_{m+1}$ do not intersect whenever $0\le k\le m-2\le n-2$.","Assume a first intersection occurs and reduce to the case where $A_0A_1$ and $A_{n-1}A_n$ intersect and the polygonal chain $A_0,\ldots,A_{n-1}$ is convex. The cases $n=3,4$ give immediate angle-length contradictions. For $n>5$, let $\alpha_i$ be the exterior angles. The strict angle hypothesis gives $\alpha_1>\cdots>\alpha_{n-1}$, hence $\alpha_{n-1}<360^\circ/(n-1)\le90^\circ$ and so $A_0A_{n-2}>A_{n-1}A_{n-2}$. But the length assumptions give
+\[A_0A_{n-2}<A_0A_1+\cdots+A_{n-3}A_{n-2}<\left({1\over2^{n-2}}+\cdots+{1\over2}\right)A_{n-1}A_{n-2}<A_{n-1}A_{n-2},
+\]
+a contradiction. Hence no such intersections occur."
+4,PB-Advanced-004,6,imo-2-1990,591,0.528356671333313,0.11031770469927316,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","On a circle, $2n-1$ ($n\ge3$) different points are given. Find the minimal natural number $N$ with the property that whenever $N$ of the given points are colored black, there exist two black points such that the interior of one of the corresponding arcs contains exactly $n$ of the given $2n-1$ points.","Call a segment good if one of its arcs contains exactly $n$ of the given points. Good segments form one or more stars; their number is governed by $\gcd(n+1,2n-1)=\gcd(n+1,3)$. If $3\nmid n+1$ (equivalently $3\nmid 2n-1$), all good segments form one star, any $n$ selected points contain adjacent vertices of this star, and $n-1$ alternating vertices avoid all good segments; hence $N=n$. If $3\mid n+1$, there are three stars. Choosing more than $(n-2)/3$ points on any one star forces a good segment, while choosing $(n-2)/3$ alternating points on each star gives $n-2$ points with no good pair; hence $N=n-1$."
+4,PB-Advanced-004,7,imo-sl-3-1990,564,0.528356671333313,0.11031770469927316,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","On a circle, $2n-1$ ($n\ge3$) different points are given. Find the minimal natural number $N$ with the property that whenever $N$ of the given points are colored black, there exist two black points such that the interior of one of the corresponding arcs contains exactly $n$ of the given $2n-1$ points.","Call a segment good if one of its arcs contains exactly $n$ of the given points. Good segments form one or more stars; their number is governed by $\gcd(n+1,2n-1)=\gcd(n+1,3)$. If $3\nmid n+1$ (equivalently $3\nmid 2n-1$), all good segments form one star, any $n$ selected points contain adjacent vertices of this star, and $n-1$ alternating vertices avoid all good segments; hence $N=n$. If $3\mid n+1$, there are three stars. Choosing more than $(n-2)/3$ points on any one star forces a good segment, while choosing $(n-2)/3$ alternating points on each star gives $n-2$ points with no good pair; hence $N=n-1$."
+4,PB-Advanced-004,8,imo-sl-4-1972,97,0.5043609142303467,0.11031770469927316,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","Let $n_1,n_2$ be positive integers. In the plane there are two disjoint finite sets $M_1,M_2$ containing respectively $2n_1$ and $2n_2$ points, and no three points of $M_1\cup M_2$ are collinear. Prove that there is a line $g$ such that each of the two open half-planes determined by $g$ contains exactly half of the points of each set.","For a directed line with angle $\alpha$, project all points onto a perpendicular axis. For each set $M_i$, the positions for which a line of direction $\alpha$ bisects $M_i$ form an open interval $J_i(\alpha)$ between the $n_i$-th and $(n_i+1)$-st projected points. These intervals vary continuously except at finitely many harmless changes of order. If for some $\alpha$ the intervals meet, the corresponding line is desired. Otherwise one of $J_1(\alpha),J_2(\alpha)$ lies wholly to the left of the other. Rotating the direction by $180^\circ$ reverses all projections, so the order of the two intervals is reversed. By continuity, at some intermediate direction the two intervals must overlap. This gives a line simultaneously bisecting both point sets."
+4,PB-Advanced-004,9,imo-sl-25-1998,853,0.5028238296508789,0.10909682119561293,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","Let $U=\{1,2,\ldots,n\}$, where $n\ge3$. A subset $S$ of $U$ is said to be split by an arrangement of the elements of $U$ if some element not in $S$ occurs between two elements of $S$ in the arrangement. Prove that for any $n-2$ subsets of $U$, each having at least two and at most $n-1$ elements, there is an arrangement of $U$ which splits all of them.","We prove the statement by induction on $n$. Let $\mathcal F$ be the family of $n-2$ subsets. There is an element $a\in U$ which belongs to every member of $\mathcal F$ of size $n-1$ and to at most one two-element member; this follows by a simple counting argument, otherwise the large sets and two-element sets would require more than $n-2$ members.
+Let $A$ be the two-element subset containing $a$, if such a subset exists; otherwise choose any member of $\mathcal F$ containing $a$. Remove $a$ from all sets except $A$. We obtain at most $n-3$ relevant subsets of $U\setminus\{a\}$, all with size between $2$ and $n-2$. By the induction hypothesis, arrange $U\setminus\{a\}$ so that all these subsets are split. Finally insert $a$ in any position away from the other element or elements of $A$. This preserves the previous splits and also splits $A$, completing the induction."
+4,PB-Advanced-004,10,imo-sl-12-1994,702,0.5319410562515259,0.10669059394565118,"For a positive integer $n$, a convex $18n+2$-gon $P$ is divided into $18n$ triangles by drawing $18n-1$ diagonals. Prove that we can choose two of these diagonals such that the three parts of $P$ divided by these two diagonals each contain at least $3n$ and at most $9n$ triangles.","C7 (BRA). Prove that for every integer $n\ge2$, there exists a set of $2^n-1$ points in the plane such that no three are collinear and no $2n$ of them are the vertices of a convex $2n$-gon.","Construct sets $S_n$ recursively. Let $S_2=\{(0,0),(1,1)\}$. Given $S_n$, let
+\[
+T_n=\{(x+2^{n-1},y+M_n):(x,y)\in S_n\},
+\]
+where $M_n$ is chosen so large that every point of $T_n$ lies above every line through two points of $S_n$, and set $S_{n+1}=S_n\cup T_n$. Then $|S_n|=2^n-1$, and no three points are collinear.
+
+We prove by induction that no convex polygon with vertices in $S_n$ has $2n$ vertices. Take any convex polygon with vertices in $S_n$ and draw the diagonal joining the vertices with the smallest and greatest $x$-coordinates. It divides the polygon into two convex polygons. By the construction and the monotonicity of slopes, each side of the diagonal has at most $n$ vertices; otherwise one obtains three consecutive vertices violating the slope order forced by the lift from $S_{n-1}$ to $T_{n-1}$. Thus the whole polygon has at most $2n-2$ vertices, so no convex $2n$-gon occurs."
+5,PB-Advanced-005,1,imo-sl-21-1985,423,0.5637959241867065,0.17150476997540087,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","The tangents at $B,C$ to the circumcircle of acute triangle $ABC$ meet at $X$, and $M$ is the midpoint of $BC$. Prove (a) $\angle BAM=\angle CAX$, and (b) $AM/AX=\cos\angle BAC$.","Choose $B_1$ on ray $AC$ and $C_1$ on ray $AB$ so that
+\[XB_1=XC=XB=XC_1.\]
+Angle chasing gives $B_1,X,C_1$ collinear and $AB_1C_1\sim ABC$. Since $X$ is the midpoint of $B_1C_1$, the corresponding median triangles give
+\[\angle BAX=\angle CAM,\]
+which is equivalent to $\angle BAM=\angle CAX$. The same similarities yield
+\[\frac{AM}{AX}=\cos\angle BAC.\]"
+5,PB-Advanced-005,2,imo-sl-7-2002,969,0.5565690994262695,0.16110894957658525,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","Let $B$ lie on a circle $S_1$, and let $A\ne B$ lie on the tangent at $B$. Let $C\notin S_1$ with segment $AC$ meeting $S_1$ twice. Let $S_2$ touch $AC$ at $C$ and touch $S_1$ at $D$ on the opposite side of $AC$ from $B$. Prove that the circumcenter of $BCD$ lies on the circumcircle of $ABC$.","Let $K$ be the circumcenter of $BCD$ and let $X$ lie on the common tangent to $S_1,S_2$ at $D$. Tangent-chord angle equalities give $$\angle BAC=\angle ABD+\angle BDC+\angle DCA=\angle BDX+\angle BDC+\angle XDC=2\angle BDC=\angle BKC.$$ Hence $A,B,C,K$ are concyclic."
+5,PB-Advanced-005,3,imo-5-1991,630,0.5369369983673096,0.15942668707801672,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","Let $ABC$ be a triangle and $M$ an interior point of $ABC$. Show that at least one of the angles $\angle MAB$, $\angle MBC$, and $\angle MCA$ is less than or equal to $30^\circ$.","Assume the contrary: $\angle MAB,\angle MBC,\angle MCA>30^\circ$. By the sine form of Ceva's theorem,
+\[
+\sin\angle MAC\,\sin\angle MBA\,\sin\angle MCB
+=\sin\angle MAB\,\sin\angle MBC\,\sin\angle MCA>{1\over 8}.
+\]
+On the other hand,
+\[
+\angle MAC+\angle MBA+\angle MCB<180^\circ-3\cdot 30^\circ=90^\circ.
+\]
+Since $\log(\sin x)$ is concave on $(0,\pi)$, Jensen's inequality gives
+\[
+\sin\angle MAC\,\sin\angle MBA\,\sin\angle MCB\le \sin^3 30^\circ={1\over 8},
+\]
+a contradiction. Hence at least one of the three stated angles is at most $30^\circ$."
+5,PB-Advanced-005,4,imo-sl-4-1991,599,0.5369369983673096,0.15942668707801672,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","Let $ABC$ be a triangle and $M$ an interior point of $ABC$. Show that at least one of the angles $\angle MAB$, $\angle MBC$, and $\angle MCA$ is less than or equal to $30^\circ$.","Assume the contrary: $\angle MAB,\angle MBC,\angle MCA>30^\circ$. By the sine form of Ceva's theorem,
+\[
+\sin\angle MAC\,\sin\angle MBA\,\sin\angle MCB
+=\sin\angle MAB\,\sin\angle MBC\,\sin\angle MCA>{1\over 8}.
+\]
+On the other hand,
+\[
+\angle MAC+\angle MBA+\angle MCB<180^\circ-3\cdot 30^\circ=90^\circ.
+\]
+Since $\log(\sin x)$ is concave on $(0,\pi)$, Jensen's inequality gives
+\[
+\sin\angle MAC\,\sin\angle MBA\,\sin\angle MCB\le \sin^3 30^\circ={1\over 8},
+\]
+a contradiction. Hence at least one of the three stated angles is at most $30^\circ$."
+5,PB-Advanced-005,5,imo-sl-19-2004,1047,0.5541571974754333,0.15775868701896992,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","In a convex quadrilateral $ABCD$, the diagonal $BD$ bisects neither $\angle ABC$ nor $\angle CDA$. A point $P$ inside $ABCD$ satisfies
+\[
+\angle PBC=\angle DBA,\qquad \angle PDC=\angle BDA.
+\]
+Prove that $ABCD$ is cyclic if and only if $AP=CP$.","If $ABCD$ is cyclic, let $BP,DP$ meet its circumcircle again at $E,F$. The angle conditions give $AB=CF$ and $AD=CE$, hence $BF\parallel AC$ and $DE\parallel AC$. Thus $BFED$ and $BFAC$ are isosceles trapezoids, and $P=BE\cap DF$ lies on the perpendicular bisector of $AC$, so $AP=CP$. Conversely suppose $AP=CP$. Let $BP,DP$ meet $AC$ at $K,L$. The points $A,C$ are isogonal in triangle $BDP$, so $K,L$ are reflections in the perpendicular bisector of $AC$. Reflect $D$ to $E$ in this bisector; then $E\in BP$ and $\triangle APD\cong\triangle CPE$. Hence $\angle BDC=\angle ADP=\angle BEC$, so $B,C,D,E$ are cyclic; also $A,C,D,E$ are cyclic. Therefore $A,B,C,D$ are cyclic."
+5,PB-Advanced-005,6,imo-5-2004,1027,0.5541571974754333,0.15775868701896992,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","In a convex quadrilateral $ABCD$, the diagonal $BD$ bisects neither $\angle ABC$ nor $\angle CDA$. A point $P$ inside $ABCD$ satisfies
+\[
+\angle PBC=\angle DBA,\qquad \angle PDC=\angle BDA.
+\]
+Prove that $ABCD$ is cyclic if and only if $AP=CP$.","If $ABCD$ is cyclic, let $BP,DP$ meet its circumcircle again at $E,F$. The angle conditions give $AB=CF$ and $AD=CE$, hence $BF\parallel AC$ and $DE\parallel AC$. Thus $BFED$ and $BFAC$ are isosceles trapezoids, and $P=BE\cap DF$ lies on the perpendicular bisector of $AC$, so $AP=CP$. Conversely suppose $AP=CP$. Let $BP,DP$ meet $AC$ at $K,L$. The points $A,C$ are isogonal in triangle $BDP$, so $K,L$ are reflections in the perpendicular bisector of $AC$. Reflect $D$ to $E$ in this bisector; then $E\in BP$ and $\triangle APD\cong\triangle CPE$. Hence $\angle BDC=\angle ADP=\angle BEC$, so $B,C,D,E$ are cyclic; also $A,C,D,E$ are cyclic. Therefore $A,B,C,D$ are cyclic."
+5,PB-Advanced-005,7,imo-sl-4-1998,832,0.5787296295166016,0.14647750886173394,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","Let $M$ and $N$ be two points inside triangle $ABC$ such that $\angle MAB=\angle NAC$ and $\angle MBA=\angle NBC$. Prove that
+\[
+\frac{AM\cdot AN}{AB\cdot AC}+\frac{BM\cdot BN}{BA\cdot BC}+\frac{CM\cdot CN}{CA\cdot CB}=1.
+\]","Choose $K$ on the ray $BN$ so that $\angle BCK=\angle BMA$. Then $\triangle BCK\sim\triangle BMA$, so
+\[
+CK=\frac{BC\cdot AM}{BM},\qquad BK=\frac{BC\cdot AB}{BM}.
+\]
+The angle conditions also give $\triangle BAK\sim\triangle BMC$, whence
+\[
+AK=\frac{AB\cdot CM}{BM}.
+\]
+Moreover $A,N,C,K$ are cyclic. Applying Ptolemy to this cyclic quadrilateral gives
+\[
+AC\cdot BK=AC\cdot BN+AN\cdot CK+CN\cdot AK.
+\]
+Substituting the three expressions above and dividing by $AB\cdot AC\cdot BC/BM$ gives the required identity."
+5,PB-Advanced-005,8,imo-sl-18-2004,1046,0.5680596828460693,0.14647750886173394,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","Let $O$ be the circumcenter of an acute triangle $ABC$ with $\angle B<\angle C$. The line $AO$ meets $BC$ at $D$. Let $E,F$ be the circumcenters of $ABD,ACD$, respectively. Extend $BA,CA$ beyond $A$ to points $G,H$ such that $AG=AC$ and $AH=AB$. Prove that $EFGH$ is a rectangle if and only if $\angle ACB-\angle ABC=60^\circ$.","Write $\beta=\angle B$ and $\gamma=\angle C$. Let $X=EF\cap AD$ and $Y=GH\cap AD$. Since $EF\perp AD$ and triangles $AGH$ and $ACB$ are congruent, one gets $GH\perp AD$, hence $EF\parallel GH$. Thus $EFGH$ is a rectangle exactly when $FX=GY$ and $EX=HY$. Now
+\[
+GY=AC\sin\gamma,\qquad FX=AF\sin\gamma,
+\]
+so $FX=GY$ iff $AF=AC$, iff $\angle AFC=60^\circ$, iff $\angle ADC=30^\circ$. But $\angle ADC=90^\circ+\beta-\gamma$, so this is equivalent to $\gamma-\beta=60^\circ$. The same computation gives $EX=HY$ under exactly the same condition."
+5,PB-Advanced-005,9,imo-2-1963,27,0.531467080116272,0.14337950436465335,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]",Find the locus of points in space that are vertices of right angles of which one ray passes through a given point and the other intersects a given segment.,"Let $A$ be the given point, $BC$ the given segment, and let $\mathcal B_1,\mathcal B_2$ be the closed balls with diameters $AB$ and $AC$. For a right angle $\angle AOK$ with $K\in[BC]$, if $B',C'$ are the feet of the perpendiculars from $B,C$ to $AO$, then $O$ lies on $B'C'$, hence on exactly one of the segments $AB',AC'$. Thus
+\[
+O\in \mathcal B_1\triangle \mathcal B_2,
+\]
+the symmetric difference of the two balls. This is exactly the required locus."
+5,PB-Advanced-005,10,imo-sl-25-2000,920,0.580219030380249,0.14185106490048777,"Let $\angle XYZ$ be an acute angle with $\angle XYZ \ne 60^\circ$, and let $A$ be a point inside $\angle XYZ$. Prove that there exists $D\ne A$ inside $\angle XYZ$ and $\theta\in (0,2\pi )$ satisfying the following condition:
+
+ For points $B$ and $C$ on the rays $\overrightarrow{YX}$ and $\overrightarrow{YZ}$ respectively, then
+ \[
+ \angle BAC = \angle XYZ \quad \implies \quad \angle BDC = \theta.
+ \]","Let $ABCD$ be a convex quadrilateral with $AB$ not parallel to $CD$. Let $X$ be a point inside $ABCD$ such that \(\angle ADX=\angle BCX<90^\circ\) and \(\angle DAX=\angle CBX<90^\circ\). If $Y$ is the intersection of the perpendicular bisectors of $AB$ and $CD$, prove that \(\angle AYB=2\angle ADX\).","Triangles \(ADX\) and \(BCX\) are similar. Construct points \(Y',Z'\) on the perpendicular bisector of $AB$ such that \(\triangle AY'Z'\) is directly similar to \(\triangle ADX\) and \(\triangle BY'Z'\) is directly similar to \(\triangle BCX\). Then \(AD/AY'=AX/AZ'\) and \(\angle DAY'=\angle XAZ'\), so \(\triangle ADY'\sim\triangle AXZ'\); similarly \(\triangle BCY'\sim\triangle BXZ'\). The similarity ratio \(AD/AX=BC/BX\) gives \(DY'=CY'\), so \(Y'\) also lies on the perpendicular bisector of $CD$. Hence \(Y'=Y\). Therefore \(\angle AYB=2\angle AY'Z'=2\angle ADX\)."
+6,PB-Advanced-006,1,imo-sl-2014-17,1253,0.5889471769332886,0.17781086947804958,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Let \( f: \mathbb{Z} \to \mathbb{Z} \) be a function satisfying  
+\[
+f(x - f(y)) = f(f(x)) - f(y) - 1
+\]  
+for all integers \( x, y \). Suppose there exists an integer \( n \) such that \( f(n) = n \). Compute the sum  
+\[
+f(0) + f(1) + f(2) + \dots + f(2023)
+\]  
+modulo \( 99991 \).","The functional equation \(f(x - f(y)) = f(f(x)) - f(y) - 1\) for all integers \(x, y\), together with the existence of an integer \(n\) with \(f(n) = n\), forces \(f(x) = -1\) for all integers \(x\). This is derived by first showing \(f(0) = -1\), then obtaining \(f(x+1) = f(f(x))\) and \(f(f(f(x))) = f(x)\), which imply \(f(x+2) = f(x)\). The periodicity and the fixed point condition then lead to the constant function.
+
+Thus the sum \(\sum_{k=0}^{2023} f(k) = 2024 \cdot (-1) = -2024\). Modulo \(99991\), this is \(99991 - 2024 = 97967\).
+
+\[
+\boxed{97967}
+\]"
+6,PB-Advanced-006,2,imo-sl-19-1999,881,0.5813604593276978,0.16798161486607552,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","A5 (JAP). Find all functions $f:\mathbb R\to\mathbb R$ satisfying $f(x-f(y))=f(f(y))+xf(y)+f(x)-1$ for all $x,y\in\mathbb R$.","Putting $y$ with $f(y)=0$ and comparing values shows either $f$ is constant or $f(0)=1$. The constant case gives no solution. With $P(x,y)$ denoting the equation, subtract $P(x-f(y),0)$ from $P(x,y)$ to get a linear dependence on $x$; varying $x$ forces $f(y)=1-y$ for all $y$. Direct substitution verifies $f(x)=1-x$, and no other case survives."
+6,PB-Advanced-006,3,imo-3-1996,787,0.5318249464035034,0.16451646289656316,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Let $\mathbb N_0$ be the set of nonnegative integers. Find all functions $f:\mathbb N_0\to\mathbb N_0$ such that
+\[
+f(m+f(n))=f(f(m))+f(n)\qquad(m,n\in\mathbb N_0).
+\]","Putting $m=n=0$ gives $f(0)=0$, hence $f(f(n))=f(n)$ and the equation becomes $f(m+f(n))=f(m)+f(n)$. The zero function is one solution. Otherwise let $a$ be the least positive fixed point. All fixed points are multiples of $a$, and for each residue $0\le i<a$ there is an integer $n_i\ge0$ with $f(i)=an_i$ and $n_0=0$. Then for $n=ka+i$,
+\[
+f(n)=f(ka+i)=f(i)+ka=(k+n_i)a.
+\]
+Conversely every function of this form satisfies the equation, so these and the zero function are exactly the solutions."
+6,PB-Advanced-006,4,imo-sl-8-1996,762,0.5318249464035034,0.16451646289656316,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Let $\mathbb N_0$ be the set of nonnegative integers. Find all functions $f:\mathbb N_0\to\mathbb N_0$ such that
+\[
+f(m+f(n))=f(f(m))+f(n)\qquad(m,n\in\mathbb N_0).
+\]","Putting $m=n=0$ gives $f(0)=0$, hence $f(f(n))=f(n)$ and the equation becomes $f(m+f(n))=f(m)+f(n)$. The zero function is one solution. Otherwise let $a$ be the least positive fixed point. All fixed points are multiples of $a$, and for each residue $0\le i<a$ there is an integer $n_i\ge0$ with $f(i)=an_i$ and $n_0=0$. Then for $n=ka+i$,
+\[
+f(n)=f(ka+i)=f(i)+ka=(k+n_i)a.
+\]
+Conversely every function of this form satisfies the equation, so these and the zero function are exactly the solutions."
+6,PB-Advanced-006,5,imo-sl-23-1991,618,0.5706925988197327,0.16280552511342444,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Let $f$ and $g$ be two integer-valued functions defined on all integers such that
+\[
+\text{(a) } f(m+f(f(n)))=-f(f(m+1))-n\quad\text{for all integers }m,n;
+\]
+\[
+\text{(b) } g\text{ is a polynomial function with integer coefficients and }g(n)=g(f(n))\quad\text{for all integers }n.
+\]
+Determine $f(1991)$ and the most general form of $g$.","In (a), replace $m$ by $f(f(m))$ and compare the resulting identity with the same identity with $m,n$ interchanged. This gives
+\[
+f(f(f(f(m))+1))-f(f(f(f(n))+1))=m-n.
+\]
+Using (a) again, if $k=f(f(2))$, then
+\[
+f(-m-k)-f(-n-k)=m-n
+\]
+for all integers $m,n$. Hence $f(t)=f(0)-t$ for all $t$, and substituting into (a) gives
+\[
+f(n)=-n-1.
+\]
+Therefore $f(1991)=-1992$.
+Condition (b) becomes $g(n)=g(-n-1)$ for every integer $n$, hence $g(x)=g(-x-1)$ as a polynomial identity. The invariant polynomials in $\mathbb Z[x]$ under $x\mapsto -x-1$ are exactly the polynomials in $x^2+x$. Thus the most general form is
+\[
+g(x)=P(x^2+x),\qquad P\in\mathbb Z[x].
+\]"
+6,PB-Advanced-006,6,imo-6-1999,862,0.5894381999969482,0.15942668707801672,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Find all functions $f:\mathbb R\to\mathbb R$ that satisfy $f(x-f(y))=f(f(y))+xf(y)+f(x)-1$ for all $x,y\in\mathbb R$.","Putting $y$ with $f(y)=0$ and comparing values shows either $f$ is constant or $f(0)=1$. The constant case gives no solution. With $P(x,y)$ denoting the equation, subtract $P(x-f(y),0)$ from $P(x,y)$ to get a linear dependence on $x$; varying $x$ forces $f(y)=1-y$ for all $y$. Direct substitution verifies $f(x)=1-x$, and no other case survives."
+6,PB-Advanced-006,7,imo-2-1992,654,0.5416315793991089,0.1496307594633238,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Find all functions $f:\mathbb R\to\mathbb R$ such that
+\[
+f(x^2+f(y))=y+f(x)^2\qquad\text{for all }x,y\in\mathbb R.
+\]","The equation implies that $f$ is injective and surjective. Comparing $x$ and $-x$ gives
+\[
+f(x)^2=f(-x)^2,
+\]
+so by injectivity $f(-x)=-f(x)$. Since $f$ is onto, choose $z$ with $f(z)=0$; then $f(-z)=0$, so $z=0$ and $f(0)=0$.
+
+Putting $y=0$ gives
+\[
+f(x^2)=f(x)^2.
+\]
+Thus $f(x)>0$ for $x>0$ and $f(x)<0$ for $x<0$. Now take $x>0$ and $y=-f(x)$. Since $f(-x)=-f(x)$,
+\[
+f(x-f(x))=f((\sqrt x)^2+f(-x))=-x+f(\sqrt x)^2=-(x-f(x)).
+\]
+Because $f$ preserves sign, this is possible only when $x-f(x)=0$. Hence $f(x)=x$ for $x>0$, and by oddness $f(x)=x$ for all real $x$. Direct substitution verifies that
+\[
+\boxed{f(x)=x}
+\]
+is the only solution."
+6,PB-Advanced-006,8,imo-sl-6-1992,637,0.5416315793991089,0.1496307594633238,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Find all functions $f:\mathbb R\to\mathbb R$ such that
+\[
+f(x^2+f(y))=y+f(x)^2\qquad\text{for all }x,y\in\mathbb R.
+\]","The equation implies that $f$ is injective and surjective. Comparing $x$ and $-x$ gives
+\[
+f(x)^2=f(-x)^2,
+\]
+so by injectivity $f(-x)=-f(x)$. Since $f$ is onto, choose $z$ with $f(z)=0$; then $f(-z)=0$, so $z=0$ and $f(0)=0$.
+
+Putting $y=0$ gives
+\[
+f(x^2)=f(x)^2.
+\]
+Thus $f(x)>0$ for $x>0$ and $f(x)<0$ for $x<0$. Now take $x>0$ and $y=-f(x)$. Since $f(-x)=-f(x)$,
+\[
+f(x-f(x))=f((\sqrt x)^2+f(-x))=-x+f(\sqrt x)^2=-(x-f(x)).
+\]
+Because $f$ preserves sign, this is possible only when $x-f(x)=0$. Hence $f(x)=x$ for $x>0$, and by oddness $f(x)=x$ for all real $x$. Direct substitution verifies that
+\[
+\boxed{f(x)=x}
+\]
+is the only solution."
+6,PB-Advanced-006,9,imo-sl-2014-3,1239,0.5440733432769775,0.13734723153743125,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","Let $f: \mathbb{Z} \to \mathbb{Z}$ be a function satisfying 
+$$ n^2 + 4f(n) = f(f(n))^2 $$
+for all integers $n$. Suppose that $f(1)=2$, $f(0)=1$, and there are exactly $100$ negative integers $n$ for which $f(n) = n+1$. Compute $f(-101)$.","The functional equation \(n^2 + 4f(n) = f(f(n))^2\) together with \(f(1)=2\), \(f(0)=1\) forces \(f(n)=n+1\) for all \(n \ge 0\). For negative integers, the equation yields two possibilities for each \(n\): \(f(n)=n+1\) or \(f(n)=1-n\). Moreover, if \(f(n)=n+1\) for some negative \(n\), then for all greater (less negative) negative integers up to \(-1\) the same holds, forming a contiguous block. The condition that exactly \(100\) negative integers satisfy \(f(n)=n+1\) implies this block is \(\{-100,-99,\dots,-1\}\). Consequently, for all \(n \le -101\) we must have \(f(n)=1-n\). Hence \(f(-101)=1-(-101)=102\).
+
+\[
+\boxed{102}
+\]"
+6,PB-Advanced-006,10,imo-sl-19-1988,505,0.5005092024803162,0.13441192262592663,"Find all functions$f:\mathbb{Z}\rightarrow\mathbb{Z}$
+ such that the equation
+ \[
+ f(x-f(xy))=f(x)f(1-y)
+ \]
+ holds for all $x,y\in\mathbb{Z}$.","A function $f$ maps positive integers to positive integers and satisfies $f(f(m)+f(n))=m+n$ for all positive integers $m,n$. Find all possible values of $f(1988)$.","The only function is the identity. Let $r=f(1)$ and $s=f(2)$. Substituting small pairs gives $f(2r)=2$, $f(2s)=4$, $f(4)=4r$, and two expressions for $f(8)$ yield $s=2r$. Inductively one obtains $f(n)=nr$ and $f(nr)=n$ for all $n\ge4$: use $f(n+1)=f(n-1+2)=(n-1)r+2r$ and then apply the functional equation. In particular $f(4r)=4r^2$, while the earlier relation gives $f(4r)=4$. Thus $r=1$, and the induction plus the initial cases gives $f(n)=n$ for all $n$. Therefore $f(1988)=1988$."
+7,PB-Advanced-007,1,imo-sl-12-1992,643,0.5580506324768066,0.31878197585323875,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Let $f,g$, and $a$ be polynomials with real coefficients, $f$ and $g$ in one variable and $a$ in two variables. Suppose
+\[
+f(x)-f(y)=a(x,y)(g(x)-g(y))\qquad\text{for all }x,y\in\mathbb R.
+\]
+Prove that there exists a polynomial $h$ such that
+\[
+f(x)=h(g(x))\qquad\text{for all }x\in\mathbb R.
+\]","We prove the result by induction on $\deg f$. If $\deg f<\deg g$, then the identity forces $f(x)-f(y)=0$, so $f$ is constant and the claim is trivial.
+
+Assume $\deg f\ge\deg g$. Replacing $f,g$ by $f-f(0),g-g(0)$, we may suppose $f(0)=g(0)=0$. Taking $y=0$ gives
+\[
+f(x)=f_1(x)g(x)
+\]
+for some polynomial $f_1$ with $\deg f_1=\deg f-\deg g<\deg f$. Substituting this into the original identity gives
+\[
+[f_1(x)-f_1(y)]g(x)=\bigl(a(x,y)-f_1(y)\bigr)(g(x)-g(y)).
+\]
+Since $g(x)$ is relatively prime, as a polynomial in $x$, to $g(x)-g(y)$, it follows that
+\[
+f_1(x)-f_1(y)=b(x,y)(g(x)-g(y))
+\]
+for some polynomial $b$. By induction, $f_1(x)=h_1(g(x))$. Hence
+\[
+f(x)=g(x)h_1(g(x))=h(g(x)),\qquad h(t)=t h_1(t).
+\]"
+7,PB-Advanced-007,2,imo-sl-22-1997,812,0.573610246181488,0.20587037180094733,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","(a) Do there exist functions $f:\mathbb R\to\mathbb R$ and $g:\mathbb R\to\mathbb R$ such that
+\[
+f(g(x))=x^2\qquad\text{and}\qquad g(f(x))=x^3
+\]
+for all $x\in\mathbb R$?
+(b) Do there exist functions $f:\mathbb R\to\mathbb R$ and $g:\mathbb R\to\mathbb R$ such that
+\[
+f(g(x))=x^2\qquad\text{and}\qquad g(f(x))=x^4
+\]
+for all $x\in\mathbb R$?","(a) No. From $g(f(x))=x^3$, the function $f$ is injective. Thus $f(-1),f(0),f(1)$ are distinct, but
+\[
+f(x)^2=f(g(f(x)))=f(x^3),
+\]
+so each of $f(-1),f(0),f(1)$ is equal to its square and hence is $0$ or $1$, impossible.
+(b) Yes. On $(1,\infty)$ define functions through $x=2^{2^t}$ by $F(2^{2^t})=2^{2^{\varphi(t)}}$ and $G(2^{2^t})=2^{2^{\psi(t)}}$, where $\varphi(\psi(t))=t+1$ and $\psi(\varphi(t))=t+2$; for instance $\varphi(t)=t/2+1$, $\psi(t)=2t$. Thus one may take
+\[
+F(x)=2^{2\sqrt{\log_2 x}},\qquad G(x)=2^{(\log_2 x)^2}\quad (x>1).
+\]
+Extend to $(0,1)$ by reciprocals, set both functions equal to $x$ at $0,1$, and finally define them evenly by absolute value. Direct substitution gives $f(g(x))=x^2$ and $g(f(x))=x^4$."
+7,PB-Advanced-007,3,imo-sl-6-1981,300,0.5672404766082764,0.1938789378238599,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Let P and Q be polynomials of degree at least 1 in one complex variable. For k in C put
+\[
+P_k=\{z:P(z)=k\},\qquad Q_k=\{z:Q(z)=k\}.
+\]
+Suppose that \(P_0=Q_0\) and \(P_1=Q_1\). Prove that P and Q are identical.","Let \(n=\deg P\), and assume without loss of generality that \(n\ge \deg Q\). Write the distinct roots of P and P-1 as
+\[
+z_1,\ldots,z_k \quad\text{and}\quad w_1,\ldots,w_m,
+\]
+with multiplicities \(\alpha_i\) and \(\beta_j\). Since P and Q have the same zero sets and one-sets, Q agrees with P at all these \(k+m\) distinct points.
+
+The derivative P' is divisible by
+\[
+\prod_i (x-z_i)^{\alpha_i-1}\prod_j (x-w_j)^{\beta_j-1},
+\]
+whose degree is \((n-k)+(n-m)=2n-k-m\). Since \(\deg P'=n-1\), we get
+\[
+2n-k-m\le n-1,
+\]
+so \(k+m\ge n+1\). Hence P-Q, a polynomial of degree at most n, has at least n+1 roots. Therefore P-Q is identically zero."
+7,PB-Advanced-007,4,imo-sl-3-1979,253,0.5532668828964233,0.18242552380635635,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Find all polynomials $f(x)$ with real coefficients such that
+$$f(x)f(2x^2)=f(2x^3+x).$$","The zero polynomial works. For nonzero $f$, substituting $x=0$ gives $f(0)=1$; the alternative $f(0)=0$ would force a contradiction after factoring out the lowest power of $x$. If $\alpha$ is a root, then $2\alpha^3+
+\alpha$ is also a root. A root of maximal modulus must have modulus at most $1$, and since the product of roots has modulus $|f(0)|=1$, all roots have modulus $1$. The relation then forces roots only at $\pm i$. Therefore
+$$f(x)=(x^2+1)^k\quad(k\in\mathbb N_0),$$
+plus the zero polynomial, and these all satisfy the equation."
+7,PB-Advanced-007,5,imo-2-2004,1024,0.5158820748329163,0.15942668707801672,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Find all polynomials $P(x)$ with real coefficients such that
+\[
+P(a-b)+P(b-c)+P(c-a)=2P(a+b+c)
+\]
+for all real numbers $a,b,c$ satisfying $ab+bc+ca=0$.","The solutions are
+\[
+P(x)=\alpha x^2+\beta x^4\qquad(\alpha,\beta\in\mathbb R).
+\]
+Write $P(x)=\sum a_i x^i$ and substitute $(a,b,c)=(6x,3x,-2x)$, which satisfies $ab+bc+ca=0$. Then
+\[
+\bigl(3^i+5^i+(-8)^i-2\cdot7^i\bigr)a_i=0
+\]
+for every $i$. The factor is negative for odd $i$, positive for $i=0$ and every even $i\ge6$, and vanishes exactly for $i=2,4$. Hence only those coefficients may remain. Direct substitution verifies all such polynomials."
+7,PB-Advanced-007,6,imo-sl-4-2004,1032,0.5158820748329163,0.15942668707801672,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Find all polynomials $P(x)$ with real coefficients such that
+\[
+P(a-b)+P(b-c)+P(c-a)=2P(a+b+c)
+\]
+for all real numbers $a,b,c$ satisfying $ab+bc+ca=0$.","The solutions are
+\[
+P(x)=\alpha x^2+\beta x^4\qquad(\alpha,\beta\in\mathbb R).
+\]
+Write $P(x)=\sum a_i x^i$ and substitute $(a,b,c)=(6x,3x,-2x)$, which satisfies $ab+bc+ca=0$. Then
+\[
+\bigl(3^i+5^i+(-8)^i-2\cdot7^i\bigr)a_i=0
+\]
+for every $i$. The factor is negative for odd $i$, positive for $i=0$ and every even $i\ge6$, and vanishes exactly for $i=2,4$. Hence only those coefficients may remain. Direct substitution verifies all such polynomials."
+7,PB-Advanced-007,7,imo-sl-9-2000,904,0.5220028162002563,0.14804719803168948,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Find all pairs of functions $f:\mathbb R\to\mathbb R$, $g:\mathbb R\to\mathbb R$ such that \(f(x+g(y))=xf(y)-yf(x)+g(x)\) for all real $x,y$.","The solutions are \(f(x)=\frac{cx-c^2}{1+c}\) and \(g(x)=cx-c^2\), where \(c\in\mathbb R\setminus\{-1\}\). First show that $g$ has a zero $\alpha$. If $f(0)=0$, putting $y=0$ gives \(f(x+g(0))=g(x)\), so a zero follows. If $f(0)\ne0$, substitutions in the equation show $g$ is injective and $f$ is surjective, again forcing a zero of $g$. With $g(\alpha)=0$, substituting $y=\alpha$ yields \(g(x)=(\alpha+1)f(x)-xf(\alpha)\); then the equation with $y=\alpha+1$ implies $f$ is linear, hence $g$ is linear. Substitution of \(f(x)=ax+b\), \(g(x)=cx+d\) and comparison of coefficients gives the displayed family, and direct checking verifies it."
+7,PB-Advanced-007,8,imo-sl-23-1991,618,0.5600970983505249,0.14185106490048777,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Let $f$ and $g$ be two integer-valued functions defined on all integers such that
+\[
+\text{(a) } f(m+f(f(n)))=-f(f(m+1))-n\quad\text{for all integers }m,n;
+\]
+\[
+\text{(b) } g\text{ is a polynomial function with integer coefficients and }g(n)=g(f(n))\quad\text{for all integers }n.
+\]
+Determine $f(1991)$ and the most general form of $g$.","In (a), replace $m$ by $f(f(m))$ and compare the resulting identity with the same identity with $m,n$ interchanged. This gives
+\[
+f(f(f(f(m))+1))-f(f(f(f(n))+1))=m-n.
+\]
+Using (a) again, if $k=f(f(2))$, then
+\[
+f(-m-k)-f(-n-k)=m-n
+\]
+for all integers $m,n$. Hence $f(t)=f(0)-t$ for all $t$, and substituting into (a) gives
+\[
+f(n)=-n-1.
+\]
+Therefore $f(1991)=-1992$.
+Condition (b) becomes $g(n)=g(-n-1)$ for every integer $n$, hence $g(x)=g(-x-1)$ as a polynomial identity. The invariant polynomials in $\mathbb Z[x]$ under $x\mapsto -x-1$ are exactly the polynomials in $x^2+x$. Thus the most general form is
+\[
+g(x)=P(x^2+x),\qquad P\in\mathbb Z[x].
+\]"
+7,PB-Advanced-007,9,imo-sl-16-1983,361,0.5346583127975464,0.14185106490048777,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Let $F(n)$ be the set of polynomials $P(x)=a_0+\cdots+a_nx^n$ satisfying $0\le a_0=a_n\le a_1=a_{n-1}\le\cdots$. Prove that if $f\in F(m)$ and $g\in F(n)$, then $fg\in F(m+n)$.","The cone $F(n)$ is generated by
+\[h_{n,i}(x)=x^i+x^{i+1}+\cdots+x^{n-i}\qquad(2i\le n).\]
+It therefore suffices to multiply two generators. If $p=n-2i\le q=m-2j$, direct convolution gives
+\[h_{n,i}(x)h_{m,j}(x)=\sum_{k=i+j}^{n-i+j}h_{m+n,k}(x),\]
+a nonnegative combination of generators of $F(m+n)$. Bilinearity completes the proof."
+7,PB-Advanced-007,10,imo-sl-15-2002,977,0.5165627598762512,0.14185106490048777,"Prove that there exist two real-coefficient polynomials $P(x)$ and $Q(x)$ satisfying the following condition:
+
+ (Condition) The degree of the polynomial $P(x)$ is at least 2024, the degree of $Q(x)$ is at least 2, and for any real number $x$, the following holds:
+
+ \[
+ P(Q(x)-x-1)=Q(P(x))
+ \]","Find all functions $f:\mathbb R\to\mathbb R$ satisfying $$f(f(x)+y)=2x+f(f(y)-x)$$ for all real $x,y$.","All solutions are $f(x)=x+c$ for arbitrary real constants $c$. Setting $y=-f(x)$ shows that the right side assumes every real value, so $f$ is surjective. Choose $x_0$ with $f(x_0)=0$. Substituting $x=x_0$ gives $f(y)=2x_0+f(f(y)-x_0)$. By surjectivity, $z=f(y)-x_0$ ranges over all reals, and this identity rearranges to $f(z)=z+c$. Direct substitution verifies every such function."
+8,PB-Advanced-008,1,imo-sl-5-2002,967,0.5975487232208252,0.21102633607906743,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","Let $m,n\ge2$ and let integers $a_1,\ldots,a_n$ be nonmultiples of $m^{n-1}$. Prove that there are integers $e_1,\ldots,e_n$, not all zero, with $|e_i|<m$ and $m^n\mid\sum e_i a_i$.","Consider the $m^n$ sums $\sum c_i a_i$ with $0\le c_i<m$. If two have the same residue modulo $m^n$, subtracting gives the desired coefficients. If all residues were distinct, the polynomial $$P(x)=\prod_{i=1}^n(1+x^{a_i}+\cdots+x^{(m-1)a_i})$$ would take the value $0$ at a primitive $m^n$-th root of unity because its exponents represent every residue. But no factor vanishes there: that would require $m^n\mid ma_i$, contrary to $m^{n-1}\nmid a_i$. This contradiction proves a collision."
+8,PB-Advanced-008,2,imo-5-2000,894,0.573925793170929,0.16798161486607552,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]",Does there exist a positive integer $n$ such that $n$ has exactly $2000$ distinct prime divisors and $2^n+1$ is divisible by $n$?,"Yes. More generally construct $n_k$ with exactly $k$ distinct prime divisors, $3\mid n_k$, and $n_k\mid 2^{n_k}+1$. Start with $n_1=3$. Suppose $n_k$ works. Choose a prime $p\nmid n_k$ dividing $2^{3n_k}+1$ but not $2^{n_k}+1$: such a prime exists because for every $a>2$, $a^3+1=(a+1)(a^2-a+1)$ has a prime divisor not dividing $a+1$ (use \(\gcd(a^2-a+1,a+1)=\gcd(3,a+1)\)). Set $n_{k+1}=3pn_k$. Then $n_{k+1}$ has one more distinct prime divisor and \(2^{n_{k+1}}+1=(2^{3n_k})^{pn_k}+1\) is divisible by both $p$ and $3n_k$, hence by $n_{k+1}$. Taking $k=2000$ gives the required integer."
+8,PB-Advanced-008,3,imo-sl-16-2000,911,0.573925793170929,0.16798161486607552,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]",Does there exist a positive integer $n$ such that $n$ has exactly $2000$ distinct prime divisors and $2^n+1$ is divisible by $n$?,"Yes. More generally construct $n_k$ with exactly $k$ distinct prime divisors, $3\mid n_k$, and $n_k\mid 2^{n_k}+1$. Start with $n_1=3$. Suppose $n_k$ works. Choose a prime $p\nmid n_k$ dividing $2^{3n_k}+1$ but not $2^{n_k}+1$: such a prime exists because for every $a>2$, $a^3+1=(a+1)(a^2-a+1)$ has a prime divisor not dividing $a+1$ (use \(\gcd(a^2-a+1,a+1)=\gcd(3,a+1)\)). Set $n_{k+1}=3pn_k$. Then $n_{k+1}$ has one more distinct prime divisor and \(2^{n_{k+1}}+1=(2^{3n_k})^{pn_k}+1\) is divisible by both $p$ and $3n_k$, hence by $n_{k+1}$. Taking $k=2000$ gives the required integer."
+8,PB-Advanced-008,4,imo-sl-21-1968,76,0.5674368739128113,0.16110894957658525,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","Let $a_0,a_1,\dots,a_k$ be positive integers. Find all positive integers $y$ such that
+\[
+a_0\mid y,
+\qquad
+(a_0+a_1)\mid (y+a_1),
+\qquad\dots,
+\qquad
+(a_0+a_k)\mid (y+a_k).
+\]","The conditions are equivalent to saying that
+\[
+y-a_0
+\]
+is divisible by each of
+\[
+a_0,
+\quad a_0+a_1,
+\quad\dots,
+\quad a_0+a_k.
+\]
+Therefore all solutions are
+\[
+\boxed{y=a_0+t\,\operatorname{lcm}(a_0,a_0+a_1,\dots,a_0+a_k),\qquad t=0,1,2,\dots.}
+\]"
+8,PB-Advanced-008,5,imo-ll-37-1977,210,0.5860305428504944,0.15775868701896992,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","Let $A_1,
+\ldots,A_{n+1}$ be positive integers with $(A_i,A_{n+1})=1$ for $i=1,
+\ldots,n$. Prove that
+$$x_1^{A_1}+\cdots+x_n^{A_n}=x_{n+1}^{A_{n+1}}$$
+has infinitely many positive integer solutions.","Seek solutions with $x_i^{A_i}=n^{A_1\cdots A_n t}$ for all $i\le n$ and $x_{n+1}=n^y$. Then the equation becomes
+$$n\cdot n^{A_1\cdots A_n t}=n^{A_{n+1}y},$$
+so $A_1\cdots A_n t+1=A_{n+1}y$. Since $A_{n+1}$ is coprime to $A_1\cdots A_n$, this linear congruence has infinitely many positive $t$, giving infinitely many solutions."
+8,PB-Advanced-008,6,imo-sl-18-1991,613,0.5510170459747314,0.15283973537436785,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","Find the highest degree $k$ of $1991$ for which $1991^k$ divides
+\[
+1990^{1991^{1992}}+1992^{1991^{1990}}.
+\]","For odd $a\ge3$ and $n\ge0$, the lifting lemma
+\[
+a^{n+1}\parallel (a+1)^{a^n}-1,
+\qquad
+ a^{n+1}\parallel (a-1)^{a^n}+1
+\]
+holds; it follows by induction from the binomial theorem. Apply it with $a=1991$. We get
+\[
+1991^{1993}\parallel 1990^{1991^{1992}}+1,
+\qquad
+1991^{1991}\parallel 1992^{1991^{1990}}-1.
+\]
+Adding these two congruences, the term with exact valuation $1991$ dominates the valuation of the sum, while the other is divisible by a higher power. Therefore the exact exponent of $1991$ in the given number is
+\[
+k=1991.
+\]"
+8,PB-Advanced-008,7,imo-sl-23-1994,713,0.6041069626808167,0.14647750886173394,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","N6 (LAT). Let $x_1$ and $x_2$ be relatively prime positive integers. For $n\ge2$, define
+\[
+x_{n+1}=x_nx_{n-1}+1.
+\]
+(a) Prove that for every $i>1$, there exists $j>i$ such that $x_i^i$ divides $x_j^j$.
+(b) Is it true that $x_1$ must divide $x_j^j$ for some $j>1$?","(a) Fix $i>1$ and a prime $p\mid x_i$. Work modulo $p$, writing $u_j\equiv x_j\pmod p$. Then
+\[
+u_{j+1}\equiv u_ju_{j-1}+1\pmod p,
+\]
+with $u_i=0$ and $u_{i+1}=1$. The finite sequence of pairs $(u_j,u_{j+1})$ is eventually periodic. A first-period argument shows that some positive period $d_p$ returns to the pair $(0,1)$, so $p\mid x_{i+d_p}$. Let $d$ be the least common multiple of these periods over all primes $p\mid x_i$. Then every prime divisor of $x_i$ divides $x_{i+kd}$ for all $k\ge1$. Choosing $k$ large enough makes the prime-power exponents in $x_{i+kd}^{i+kd}$ at least those in $x_i^i$, hence $x_i^i\mid x_j^j$ for $j=i+kd$.
+
+(b) No. Take $x_1=22$ and $x_2=9$. Then $x_n$ is even exactly when $n\equiv1\pmod3$. Modulo $11$, the sequence begins
+\[
+0,9,1,10,0,1,1,2,3,7,0,\ldots,
+\]
+and $11\mid x_n$ for $n>1$ exactly when $n\equiv5\pmod6$. These congruence conditions are incompatible, so no $x_n$ with $n>1$ is divisible by both $2$ and $11$. Hence $22\nmid x_j^j$ for all $j>1$."
+8,PB-Advanced-008,8,imo-sl-13-1991,608,0.5361711382865906,0.14492163148782286,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","Given an integer $n\ge2$, assume that the integers $a_1,a_2,
+\ldots,a_n$ are not divisible by $n$ and that $n$ does not divide $a_1+a_2+\cdots+a_n$. Prove that there exist at least $n$ different sequences $(e_1,e_2,
+\ldots,e_n)$ consisting of zeros or ones such that
+\[
+e_1a_1+e_2a_2+\cdots+e_na_n
+\]
+is divisible by $n$.","Call a $0$-$1$ sequence good if the corresponding sum is divisible by $n$. For any ordering of the $a_i$, the $n+1$ partial sums $0,a_{\sigma(1)},a_{\sigma(1)}+a_{\sigma(2)},
+\ldots,a_{\sigma(1)}+\cdots+a_{\sigma(n)}$ give two congruent values modulo $n$, and their difference gives a nontrivial good sequence.
+To get many distinct sequences, use the following lemma: if $A$ is a $k\times n$ $0$-$1$ matrix with $k\le n-2$, every row containing at least one $0$ and at least two $1$'s, then the columns of $A$ can be permuted so that in no row do the $1$'s form one consecutive block. The lemma is proved by induction on $k$: mark the unique zero in rows with one zero and the two ones in rows with exactly two ones; some column has at most one mark, remove it and apply induction, then insert it back so that no block of ones is created.
+Starting with no good sequences, repeatedly choose a permutation whose consecutive-block sequences avoid all previously found nontrivial good sequences. The partial-sum argument then gives a new nontrivial good sequence. This can be continued until $n-1$ nontrivial good sequences are obtained. Together with the all-zero sequence, there are at least $n$ good sequences."
+8,PB-Advanced-008,9,imo-sl-19-1979,269,0.5324043035507202,0.14337950436465335,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","Define $a_1=3$, $b_1=100$, $a_{n+1}=3^{a_n}$, and $b_{n+1}=100^{b_n}$. Find the smallest integer $m$ such that $b_m>a_{100}$.","Use tower notation $i_1=i$, $i_{j+1}=i^{i_j}$. Then $a_{100}=3_{100}$ and $b_m=100_m$. Since $100_1=100>27=3_2$, induction gives $100_j>3_{j+1}$, hence $m\le99$. For the reverse, $(100_1)^2=10^4<27^4=3^{12}<3^{27}=3_3$, and an induction using $d>12$ and $c>d^2\Rightarrow3^c>(100^d)^2$ gives $100_{j-2}<3_j$ up to $j=100$. Thus $100_{98}<3_{100}<100_{99}$, and $m=99$."
+8,PB-Advanced-008,10,imo-sl-16-1968,71,0.5628563165664673,0.1403362494900832,"Let $\left\{F_{n}\right\}_{n \geq 1}$ be a sequence of integers satisfying $F_{1}=1$ and for $n \geq 2$,
+ \[
+ F_{n}=n^{F_{n-1}}.
+ \]
+ For example, $F_3 = 3^2= 9$ and $F_4 = 4^9$.
+
+ Prove that for any positive integers $a, c$ and integer $b$, there exists a positive integer $n$ such that the following expression is an integer:
+
+ \[
+ \frac{a^{F_{n}}+n-b}{c}.
+ \]","A polynomial
+\[
+p(x)=a_0x^k+a_1x^{k-1}+\cdots+a_k
+\]
+with integer coefficients is said to be divisible by an integer $m$ if $p(x)$ is divisible by $m$ for all integers $x$. Prove that if $p(x)$ is divisible by $m$, then $k!a_0$ is also divisible by $m$. Also prove that if $a_0,k,m$ are nonnegative integers for which $k!a_0$ is divisible by $m$, then there exists a polynomial $p(x)=a_0x^k+\cdots+a_k$ divisible by $m$.","Proceed by induction on $k$. For $k=0$ the claim is immediate. If $p$ has degree $k$, put
+\[
+p_1(x)=p(x+1)-p(x).
+\]
+Then $p_1$ is divisible by $m$ for all integers $x$, has degree $k-1$, and leading coefficient $ka_0$. By induction,
+\[
+m\mid (k-1)!(ka_0)=k!a_0.
+\]
+Conversely, if $m\mid k!a_0$, take
+\[
+p(x)=k!a_0\binom{x}{k}.
+\]
+This is an integer-coefficient polynomial with leading coefficient $a_0$ and is divisible by $m$ at every integer $x$."
+9,PB-Advanced-009,1,imo-sl-15-1988,501,0.6436053514480591,0.18904154809739496,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","For acute triangle $ABC$, construct $L_A$ as follows: if $H$ is the foot from $A$ to $BC$, the circle with diameter $AH$ meets $AB,AC$ again at $M,N$, and $L_A$ is the line through $A$ perpendicular to $MN$. Define $L_B,L_C$ cyclically. Prove the three lines are concurrent.","Because $AMHN$ is cyclic with diameter $AH$, one gets $\angle AMN=C$ and $\angle ANM=B$. Therefore the line through $A$ perpendicular to $MN$ makes angle $90^\circ-C$ with $AB$, which is precisely the direction from $A$ to the circumcenter $O$ of $ABC$. Thus $L_A$ passes through $O$. The same cyclic argument shows $L_B$ and $L_C$ also pass through $O$, so the three lines are concurrent at the circumcenter."
+9,PB-Advanced-009,2,imo-sl-12-1996,766,0.6276968717575073,0.18149520803767977,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","Let $ABC$ be acute with $BC>CA$. Let $O$ be the circumcenter, $H$ the orthocenter, and $F$ the foot of altitude $CH$. The perpendicular to $OF$ at $F$ meets $CA$ at $P$. Prove that $\angle FHP=\angle BAC$. What happens if $BC\le CA$?","Let $Y,Z$ be the midpoints of $AC,AB$ and draw $HR\perp FP$. Since $Y$ is the circumcenter of $FCA$, $\angle FYA=180^\circ-2A$; also $OFPY$ is cyclic, so $\angle OPF=\angle OYF=2A-90^\circ$. Similarity of $OZF$ and $HRF$ gives $HR\cdot OF=HF\cdot OZ$, and hence $HR/HE=OY/OF$. Therefore triangles $EHR$ and $FOY$ are similar, so $\angle HPC=\angle HRE=\angle OYF=2A-90^\circ$ and $\angle FHP=A$. If $BC\le CA$, then for $A>45^\circ$ the same equality holds, for $A=45^\circ$ point $P$ is at infinity, and for $A<45^\circ$ one gets $\angle FHP=180^\circ-A$."
+9,PB-Advanced-009,3,imo-sl-22-2000,917,0.6081639528274536,0.18149520803767977,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","Let $O$ be the circumcenter and $H$ the orthocenter of an acute triangle $ABC$. Show that there exist points $D,E,F$ on sides $BC,CA,AB$, respectively, such that \(OD+DH=OE+EH=OF+FH\) and the lines \(AD,BE,CF\) are concurrent.","Reflect $H$ across $BC$ to a point $L$ on the circumcircle, and let \(D=OL\cap BC\). Define \(E,F\) cyclically. Then \(OD+DH=OD+DL=OL\), and cyclically all three sums equal the circumradius. It remains to prove concurrency. Let \(AO\) meet \(BC\) at \(D'\). From \(\angle OD'D=\angle ODD'\), the perpendicular bisector of \(BC\) also bisects \(DD'\), so \(BD=CD'\). If \(E',F'\) are defined analogously, then \(CE=AE'\) and \(AF=BF'\). The cevians \(AD',BE',CF'\) meet at \(O\); hence \(\frac{BD'}{D'C}\frac{CE'}{E'A}\frac{AF'}{F'B}=1\). Replacing by the equal ratios above gives \(\frac{BD}{DC}\frac{CE}{EA}\frac{AF}{FB}=1\), so by Ceva, \(AD,BE,CF\) are concurrent."
+9,PB-Advanced-009,4,imo-sl-18-1997,808,0.6703354120254517,0.17872642365885047,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","The altitudes through the vertices $A,B,C$ of an acute-angled triangle $ABC$ meet the opposite sides at $D,E,F$, respectively. The line through $D$ parallel to $EF$ meets the lines $AC$ and $AB$ at $Q$ and $R$, respectively. The line $EF$ meets $BC$ at $P$. Prove that the circumcircle of triangle $PQR$ passes through the midpoint of $BC$.","Assume $AB>AC$, and let $M$ be the midpoint of $BC$. It is enough to prove $DM\cdot DP=DQ\cdot DR$. Since triangles $ABC$, $AEF$, and $AQR$ are similar and $B,C,Q,R$ are concyclic, we have $DB\cdot DC=DQ\cdot DR$. It remains to show $DB\cdot DC=DM\cdot DP$. The cyclic quadrilaterals $BCEF$ and $EFDM$ give $PB\cdot PC=PE\cdot PF=PD\cdot PM$. Writing $PB=x$ and $PC=y$, one computes
+\[
+PM=\frac{x+y}{2},\quad PD=\frac{2xy}{x+y},\quad DB=\frac{x(x-y)}{x+y},\quad DC=\frac{y(x-y)}{x+y},\quad DM=\frac{(x-y)^2}{2(x+y)}.
+\]
+These identities give the required product equality, so $M$ lies on the circumcircle of $PQR$."
+9,PB-Advanced-009,5,imo-sl-32-1989,555,0.5869541168212891,0.1732882059293266,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ",The vertex $A$ of the acute triangle $ABC$ is equidistant from the circumcenter $O$ and the orthocenter $H$. Determine all possible values of angle $A$.,"Let $R$ be the circumradius. Since $A$ is equidistant from $O$ and $H$, $AH=AO=R$. If $CC'$ is an altitude, then $AC'=|R\sin B|$, so $CC'=|R\sin B\tan A|$. Also $CC'=|BC\sin B|=2R\sin A\sin B$. Hence $2|\sin A|=|\tan A|$, so $|\cos A|=1/2$. Because the triangle is acute, $A=60^\circ$. A vector proof gives the same result from $\vec H=\vec A+\vec B+\vec C$ and $AH=R$."
+9,PB-Advanced-009,6,imo-sl-5-1998,833,0.5749275088310242,0.16798161486607552,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","Let $ABC$ be a triangle with orthocentre $H$, circumcentre $O$, and circumradius $R$. Let $D,E,F$ be the reflections of $A,B,C$ in the opposite sides. Prove that $D,E,F$ are collinear if and only if $OH=2R$.","Let $G$ be the centroid. The homothety with center $G$ and ratio $-\frac12$ sends $H$ to $O$ and sends $ABC$ to the medial triangle $A_2B_2C_2$. Let $D',E',F'$ be the images of $D,E,F$. These are precisely the projections of $O$ onto the sides of $A_2B_2C_2$. By Simson's theorem, $D',E',F'$ are collinear if and only if $O$ lies on the circumcircle of $A_2B_2C_2$. This circle has center $H$ and radius $2R$, so the condition is exactly $OH=2R$. Since homotheties preserve collinearity, the same criterion holds for $D,E,F$."
+9,PB-Advanced-009,7,imo-sl-10-1996,764,0.6022024750709534,0.16451646289656316,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","Let triangle $ABC$ have orthocenter $H$, and let $P$ be a point on its circumcircle distinct from $A,B,C$. Let $E$ be the foot of altitude $BH$, let $PAQB$ and $PARC$ be parallelograms, and let $AQ$ meet $HR$ at $X$. Prove that $EX\parallel AP$.","First $H$ is also the orthocenter of triangle $AQR$. If $G,G'$ are the centroids of $ABC$ and $PBC$, the Euler-line relation gives $\vec{HH'}=3\vec{G'G}=\vec{AP}$, where $H'$ is the orthocenter of $PBC$. Thus $AQR$ is the translate of $PBC$ by $\vec{AP}$. Since $RH\perp AQ$, we have $\angle AXH=90^\circ=\angle AEH$, so $AXEH$ is cyclic. Therefore $\angle EXQ=180^\circ-\angle AHE=180^\circ-\angle BCA=180^\circ-\angle BPA=\angle PAQ$, which proves $EX\parallel AP$."
+9,PB-Advanced-009,8,imo-sl-20-1997,810,0.6034584045410156,0.1561048974454574,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","Let $D$ be an internal point on the side $BC$ of a triangle $ABC$. The line $AD$ meets the circumcircle of $ABC$ again at $X$. Let $P$ and $Q$ be the feet of the perpendiculars from $X$ to $AB$ and $AC$, respectively, and let $\gamma$ be the circle with diameter $XD$. Prove that the line $PQ$ is tangent to $\gamma$ if and only if $AB=AC$.","Let $R$ be the foot from $X$ to $BC$. The points $P,Q,R$ lie on the Simson line of $X$ with respect to triangle $ABC$. The line $PQ$ is tangent to the circle with diameter $XD$ exactly when $\angle PRD=\angle RXD$. Angle chasing gives
+\[
+\angle PRD=90^\circ-\angle XBA=90^\circ-\angle XBC+\angle ABC=90^\circ-\angle DAC+\angle ABC,
+\]
+while
+\[
+\angle RXD=90^\circ-\angle ADB=90^\circ+\angle BCA-\angle DAC.
+\]
+These are equal if and only if $\angle ABC=\angle BCA$, which is equivalent to $AB=AC$."
+9,PB-Advanced-009,9,imo-sl-16-1997,806,0.5875237584114075,0.1561048974454574,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","In an acute-angled triangle $ABC$, let $AD,BE$ be altitudes and $AP,BQ$ internal angle bisectors. Let $I$ and $O$ be the incenter and circumcenter of the triangle, respectively. Prove that the points $D,E,I$ are collinear if and only if the points $P,Q,O$ are collinear.","For a point $X$ let $d_a(X),d_b(X),d_c(X)$ be its distances from the sides opposite $A,B,C$. A point lies on $PQ$ precisely when $d_a(X)+d_b(X)=d_c(X)$. Applying this to the circumcenter gives $O\in PQ$ if and only if $\cos A+\cos B=\cos C$. On the other hand, using the altitude foot positions, $D,E,I$ are collinear if and only if $AE+BD=DE$, and this metric condition simplifies to the same identity $\cos A+\cos B=\cos C$. Hence the two collinearity statements are equivalent."
+9,PB-Advanced-009,10,imo-sl-2015-9,1267,0.6375015377998352,0.1544652650835347,"Let $H$ be the orthocenter of an acute-angled triangle $A B C$, and let $D, E, F$ be the feet of the altitudes from vertices $A, B, C$ to the opposite sides, respectively. Let $G$ be the midpoint of $B C$. Let $I, J$ be the feet of the perpendiculars from $B, C$ to $AG$, respectively. Let $K (\neq D)$ be the second intersection of the circumcircles of triangle $D I F$ and triangle $D J E$. Let $M$ be the midpoint of segment $A H$. Let $L$ be the foot of the perpendicular from $M$ to $A G$. Let $R (\neq G)$ be the second intersection of the circumcircle of triangle $A H G$ with $B C$. Let $S$ be the intersection of line $A H$ and $E F$. Let $N$ be the foot of the perpendicular from point $D$ to $R S$. Let $O$ be the midpoint of segment $D N$. Let line $D N$ intersect the circumcircle of triangle $D K L$ again at point $P (\neq D)$. Let $Q (\neq C)$ be the second intersection of the circumcircle of triangle $O C P$ and line $B C$. Prove that $A B=A Q$. ","Let $ABC$ be an acute triangle with vertices $A=(0,0)$, $B=(8,0)$, $C=(2,6)$. Let $H$ be the orthocenter of $\triangle ABC$, $M$ the midpoint of $BC$, and $F$ the foot of the altitude from $A$ to $BC$. Let $\Gamma$ be the circumcircle of $ABC$. Points $Q$ and $K$ lie on $\Gamma$ such that $\angle AQH = 90^\circ$ and $\angle QKH = 90^\circ$. Compute the power of point $M$ with respect to the circumcircle of triangle $KQH$.","The orthocenter of triangle \(ABC\) is \(H=(2,2)\). The midpoint of \(BC\) is \(M=(5,3)\). The circumcircle \(\Gamma\) of \(ABC\) has center \(O=(4,2)\) and radius \(2\sqrt5\).
+
+The point \(Q\) on \(\Gamma\) such that \(\angle AQH=90^\circ\) is the second intersection of \(\Gamma\) with the circle having diameter \(AH\). Solving gives \(Q=\left(-\frac25,\frac65\right)\).
+
+Because \(\angle QKH=90^\circ\), the circumcircle of triangle \(KQH\) has \(QH\) as a diameter. Its center is the midpoint \(D\) of \(QH\): \(D=\left(\frac45,\frac85\right)\), and its radius \(r\) is half of \(QH\): \(r=\frac{2\sqrt{10}}5\).
+
+The power of \(M\) with respect to this circle is
+\[
+\operatorname{Pow}(M)=MD^2-r^2.
+\]
+Compute
+\[
+MD^2=\left(5-\frac45\right)^2+\left(3-\frac85\right)^2=\left(\frac{21}5\right)^2+\left(\frac75\right)^2=\frac{441+49}{25}=\frac{490}{25},
+\qquad
+r^2=\left(\frac{2\sqrt{10}}5\right)^2=\frac{40}{25}.
+\]
+Hence
+\[
+\operatorname{Pow}(M)=\frac{490}{25}-\frac{40}{25}=\frac{450}{25}=18.
+\]
+
+\[
+\boxed{18}
+\]"
+10,PB-Advanced-010,1,imo-sl-10-2002,972,0.6362590789794922,0.17781086947804958,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","Circles $S_1,S_2$ meet at $P,Q$. Points $A_1,B_1\in S_1\setminus\{P,Q\}$ are distinct; $A_1P,B_1P$ meet $S_2$ again at $A_2,B_2$, and $A_1B_1$ meets $A_2B_2$ at $C$. Prove that the circumcenters of $A_1A_2C$ lie on one fixed circle.","Let $O$ be the circumcenter of $A_1A_2C$, and $O_1,O_2$ the fixed centers of $S_1,S_2$. Angle chasing shows $Q$ lies on the circumcircle of $A_1A_2C$, hence $OA_1=OQ$. Since also $O_1A_1=O_1Q$, both $O,O_1$ lie on the perpendicular bisector of $A_1Q$, so $OO_1\perp A_1Q$. Similarly $OO_2\perp A_2Q$. Thus $$\angle O_2OO_1=180^\circ-\angle A_1QA_2=180^\circ-\angle O_1QO_2,$$ so $O$ lies on the fixed circle through $O_1,O_2,Q$."
+10,PB-Advanced-010,2,imo-sl-5-1998,833,0.5987609624862671,0.16451646289656316,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","Let $ABC$ be a triangle with orthocentre $H$, circumcentre $O$, and circumradius $R$. Let $D,E,F$ be the reflections of $A,B,C$ in the opposite sides. Prove that $D,E,F$ are collinear if and only if $OH=2R$.","Let $G$ be the centroid. The homothety with center $G$ and ratio $-\frac12$ sends $H$ to $O$ and sends $ABC$ to the medial triangle $A_2B_2C_2$. Let $D',E',F'$ be the images of $D,E,F$. These are precisely the projections of $O$ onto the sides of $A_2B_2C_2$. By Simson's theorem, $D',E',F'$ are collinear if and only if $O$ lies on the circumcircle of $A_2B_2C_2$. This circle has center $H$ and radius $2R$, so the condition is exactly $OH=2R$. Since homotheties preserve collinearity, the same criterion holds for $D,E,F$."
+10,PB-Advanced-010,3,imo-sl-14-1968,69,0.6184290647506714,0.15122825250907418,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","A line in the plane of triangle $ABC$ intersects sides $AB$ and $AC$ at points $X$ and $Y$, respectively, such that $BX=CY$. Find the locus of the center of the circumcircle of triangle $XAY$.","Let $O$ be the circumcenter of $ABC$, and let $D,E$ be the midpoints of $AB,AC$. Let $O_1,D_1,E_1$ be the circumcenter of $AXY$ and the midpoints of $AX,AY$. Since
+\[
+AD=AB/2,
+\quad AD_1=AX/2,
+\]
+we have $DD_1=BX/2$, and similarly $EE_1=CY/2$. Hence $O_1$ is at equal distances $BX/2=CY/2$ from the lines $OD$ and $OE$, and so lies on the angle bisector of $\angle DOE$. As $X$ and $Y$ vary on $AB$ and $AC$, the locus is the segment $OP$, where $P$ is the point on this bisector at distance $\min(AB,AC)/2$ from both $OD$ and $OE$."
+10,PB-Advanced-010,4,imo-sl-15-1988,501,0.6153565645217896,0.14804719803168948,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","For acute triangle $ABC$, construct $L_A$ as follows: if $H$ is the foot from $A$ to $BC$, the circle with diameter $AH$ meets $AB,AC$ again at $M,N$, and $L_A$ is the line through $A$ perpendicular to $MN$. Define $L_B,L_C$ cyclically. Prove the three lines are concurrent.","Because $AMHN$ is cyclic with diameter $AH$, one gets $\angle AMN=C$ and $\angle ANM=B$. Therefore the line through $A$ perpendicular to $MN$ makes angle $90^\circ-C$ with $AB$, which is precisely the direction from $A$ to the circumcenter $O$ of $ABC$. Thus $L_A$ passes through $O$. The same cyclic argument shows $L_B$ and $L_C$ also pass through $O$, so the three lines are concurrent at the circumcenter."
+10,PB-Advanced-010,5,imo-sl-18-1997,808,0.6205213069915771,0.14185106490048777,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","The altitudes through the vertices $A,B,C$ of an acute-angled triangle $ABC$ meet the opposite sides at $D,E,F$, respectively. The line through $D$ parallel to $EF$ meets the lines $AC$ and $AB$ at $Q$ and $R$, respectively. The line $EF$ meets $BC$ at $P$. Prove that the circumcircle of triangle $PQR$ passes through the midpoint of $BC$.","Assume $AB>AC$, and let $M$ be the midpoint of $BC$. It is enough to prove $DM\cdot DP=DQ\cdot DR$. Since triangles $ABC$, $AEF$, and $AQR$ are similar and $B,C,Q,R$ are concyclic, we have $DB\cdot DC=DQ\cdot DR$. It remains to show $DB\cdot DC=DM\cdot DP$. The cyclic quadrilaterals $BCEF$ and $EFDM$ give $PB\cdot PC=PE\cdot PF=PD\cdot PM$. Writing $PB=x$ and $PC=y$, one computes
+\[
+PM=\frac{x+y}{2},\quad PD=\frac{2xy}{x+y},\quad DB=\frac{x(x-y)}{x+y},\quad DC=\frac{y(x-y)}{x+y},\quad DM=\frac{(x-y)^2}{2(x+y)}.
+\]
+These identities give the required product equality, so $M$ lies on the circumcircle of $PQR$."
+10,PB-Advanced-010,6,imo-sl-5-1990,566,0.5638668537139893,0.13883499354730713,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","Given a triangle $ABC$ with no two sides equal, let $G,K,H$ be its centroid, incenter, and orthocenter, respectively. Prove that $\angle GKH>90^\circ$.","Let $O$ be the circumcenter, $R,r$ the circumradius and inradius, and let $E$ be the midpoint of $OH$. Use the standard identities $\overrightarrow{OH}=3\overrightarrow{OG}$, $OK^2=R^2-2Rr$, and $KE=R/2-r$. Then $\overrightarrow{KH}=2\overrightarrow{KE}-\overrightarrow{KO}$ and $\overrightarrow{KG}=(2\overrightarrow{KE}+\overrightarrow{KO})/3$, so $$\overrightarrow{KH}\cdot\overrightarrow{KG}=\frac13(4KE^2-KO^2)=-\frac23r(R-2r).$$ Since the triangle is not equilateral, Euler's inequality is strict: $R>2r$. Therefore the dot product is negative and $\angle GKH>90^\circ$."
+10,PB-Advanced-010,7,imo-sl-2015-9,1267,0.6157817840576172,0.13587289700909427,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","Let $ABC$ be an acute triangle with vertices $A=(0,0)$, $B=(8,0)$, $C=(2,6)$. Let $H$ be the orthocenter of $\triangle ABC$, $M$ the midpoint of $BC$, and $F$ the foot of the altitude from $A$ to $BC$. Let $\Gamma$ be the circumcircle of $ABC$. Points $Q$ and $K$ lie on $\Gamma$ such that $\angle AQH = 90^\circ$ and $\angle QKH = 90^\circ$. Compute the power of point $M$ with respect to the circumcircle of triangle $KQH$.","The orthocenter of triangle \(ABC\) is \(H=(2,2)\). The midpoint of \(BC\) is \(M=(5,3)\). The circumcircle \(\Gamma\) of \(ABC\) has center \(O=(4,2)\) and radius \(2\sqrt5\).
+
+The point \(Q\) on \(\Gamma\) such that \(\angle AQH=90^\circ\) is the second intersection of \(\Gamma\) with the circle having diameter \(AH\). Solving gives \(Q=\left(-\frac25,\frac65\right)\).
+
+Because \(\angle QKH=90^\circ\), the circumcircle of triangle \(KQH\) has \(QH\) as a diameter. Its center is the midpoint \(D\) of \(QH\): \(D=\left(\frac45,\frac85\right)\), and its radius \(r\) is half of \(QH\): \(r=\frac{2\sqrt{10}}5\).
+
+The power of \(M\) with respect to this circle is
+\[
+\operatorname{Pow}(M)=MD^2-r^2.
+\]
+Compute
+\[
+MD^2=\left(5-\frac45\right)^2+\left(3-\frac85\right)^2=\left(\frac{21}5\right)^2+\left(\frac75\right)^2=\frac{441+49}{25}=\frac{490}{25},
+\qquad
+r^2=\left(\frac{2\sqrt{10}}5\right)^2=\frac{40}{25}.
+\]
+Hence
+\[
+\operatorname{Pow}(M)=\frac{490}{25}-\frac{40}{25}=\frac{450}{25}=18.
+\]
+
+\[
+\boxed{18}
+\]"
+10,PB-Advanced-010,8,imo-sl-8-1995,728,0.5740232467651367,0.13296424019782926,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","Let $A,B,C$ be noncollinear points. Prove that there is a unique point $X$ in the plane of $ABC$ such that
+\[
+XA^2+XB^2+AB^2=XB^2+XC^2+BC^2=XC^2+XA^2+CA^2.
+\]","Let $A',B',C'$ be the points symmetric to $A,B,C$ about the midpoints of $BC,CA,AB$, respectively. The equation $XB^2-XC^2=AC^2-AB^2=A'B^2-A'C^2$ says that $X$ lies on the line through $A'$ perpendicular to $BC$. The analogous equations put $X$ on the corresponding two altitudes of triangle $A'B'C'$. Thus $X$ is uniquely the orthocenter of $A'B'C'$, and direct substitution verifies the required equalities."
+10,PB-Advanced-010,9,imo-sl-22-1985,424,0.6167131662368774,0.13010847436299786,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","A circle centered at $O$ passes through $A,C$ and meets $AB,BC$ again at $K,N$. The circumcircles of $ABC$ and $KBN$ meet at $B,M$. Prove $\angle OMB=90^\circ$.","Let $S,R$ be the circumcenters of $ABC$ and $KBN$. Similarity of $BNK$ and $BAC$ gives $BR\parallel OS$ and $BS\parallel OR$, so $BROS$ is a parallelogram. Reflect $B$ across $R$ to $L$; then $RLOS$ is also a parallelogram. Since the common chord $BM$ is perpendicular to $SR$, both $OL$ and $LM$ are perpendicular to $BM$. Hence $O,L,M$ are collinear and $OM\perp BM$, proving the claim."
+10,PB-Advanced-010,10,imo-5-1985,429,0.6167131662368774,0.13010847436299786,"Let $O$ and $G$ be the circumcenter and centroid of a non-isosceles triangle $ABC$, respectively. Let $H$ be the foot of the perpendicular from $A$ to $BC$, and let $M$ be the midpoint of $BC$. For a point $X$ on the line $OG$, let the line $BX$ intersect $AC$ at $P$, and let the line $CX$ intersect $AB$ at $Q$. Let $H_1$ be the foot of the perpendicular from $P$ to the line $AB$, and let $K$ be the reflection of $A$ about $H_1$. Let $T$ be the intersection of the circumcircle of triangle $KPQ$ and the circumcircle of triangle $PHM$. Prove that as $X$ moves along the line $OG$, $T$ moves along a fixed circle.","A circle centered at $O$ passes through $A,C$ and meets $AB,BC$ again at $K,N$. The circumcircles of $ABC$ and $KBN$ meet at $B,M$. Prove $\angle OMB=90^\circ$.","Let $S,R$ be the circumcenters of $ABC$ and $KBN$. Similarity of $BNK$ and $BAC$ gives $BR\parallel OS$ and $BS\parallel OR$, so $BROS$ is a parallelogram. Reflect $B$ across $R$ to $L$; then $RLOS$ is also a parallelogram. Since the common chord $BM$ is perpendicular to $SR$, both $OL$ and $LM$ are perpendicular to $BM$. Hence $O,L,M$ are collinear and $OM\perp BM$, proving the claim."

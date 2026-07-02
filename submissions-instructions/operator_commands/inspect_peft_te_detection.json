@@ -1,0 +1,1 @@
+{"action":"run_command","command":["bash","-lc","sed -n '150,205p' /usr/local/lib/python3.12/dist-packages/peft/import_utils.py; printf '\\n--- te.py ---\\n'; sed -n '1,80p' /usr/local/lib/python3.12/dist-packages/peft/tuners/lora/te.py"]} 

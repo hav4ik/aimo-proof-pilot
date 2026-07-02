@@ -1,0 +1,1 @@
+{"action":"run_command","command":["bash","-lc","if [ \"$(hostname)\" != hnode601 ]; then echo rejoin_skipped host=$(hostname); exit 0; fi; echo rejoining host=$(hostname) address=hnode096:29538; ray start --address=hnode096:29538 --dashboard-host=0.0.0.0 --num-cpus=96; ray status --address=hnode096:29538"]} 

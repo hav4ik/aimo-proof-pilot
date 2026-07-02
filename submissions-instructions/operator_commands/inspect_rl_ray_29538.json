@@ -1,0 +1,1 @@
+{"action":"run_command","command":["bash","-lc","echo HOST=$(hostname); echo '--- RAY STATUS ---'; timeout 25 ray status --address=hnode096:29538 || true; echo '--- PROCESSES ---'; pgrep -af 'raylet|gcs_server|open_instruct.grpo_fast|cli_main|proofbench_smoke_99444b4' || true; echo '--- GPU ---'; nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader"]} 
