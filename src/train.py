@@ -16,7 +16,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-DEFAULT_SUBMISSIONS_REPO = "https://github.com/nguyen599/aimo-proof-pilot.git"
+DEFAULT_SUBMISSIONS_REPO = "https://github.com/nguyen599/submissions-instructions.git"
 DEFAULT_OPEN_INSTRUCT_REPO = "https://github.com/nguyen599/open-instruct.git"
 DEFAULT_OLMO_CORE_REPO = "https://github.com/nguyen599/OLMo-core.git"
 DEFAULT_RLCSD_REPO = "https://github.com/THU-BPM/RLCSD.git"
@@ -158,6 +158,11 @@ DEFAULT_PRIME_RL_SOURCE_REQUIREMENTS = (
         "https://github.com/PrimeIntellect-ai/prime-rl/releases/download/v0.5.0/"
         "deep_ep-1.2.1+29d31c0-cp312-cp312-linux_x86_64.whl"
     ),
+    (
+        "deep-gemm @ "
+        "https://github.com/PrimeIntellect-ai/prime-rl/releases/download/v0.5.0/"
+        "deep_gemm-2.5.0+891d57b-cp312-cp312-linux_x86_64.whl"
+    ),
 )
 DEFAULT_PRIME_RL_RUNTIME_REQUIREMENTS = (
     DEFAULT_VLLM_RUNTIME_WHEEL_URL,
@@ -184,7 +189,6 @@ PROTECTED_RUNTIME_OVERLAY_PACKAGES = (
     "torchvision",
     "triton",
     "transformer_engine",
-    "vllm",
 )
 WRAPPER_REEXEC_ENV = "TRAIN_WRAPPER_REEXECUTED"
 PREPARED_ENGINE_ENV = "TRAIN_WRAPPER_PREPARED_ENGINE_PATH"
@@ -790,6 +794,34 @@ def prepend_ld_library_path(*paths: Path | str) -> None:
     os.environ["LD_LIBRARY_PATH"] = os.pathsep.join(dict.fromkeys(part for part in parts if part))
 
 
+def find_system_nccl_library() -> Path | None:
+    configured = os.environ.get("PRIME_RL_SYSTEM_NCCL_PATH") or os.environ.get("TRAIN_WRAPPER_SYSTEM_NCCL_PATH")
+    candidates = [
+        configured,
+        "/usr/lib/x86_64-linux-gnu/libnccl.so.2",
+        "/usr/lib/x86_64-linux-gnu/libnccl.so",
+        "/usr/local/cuda/lib64/libnccl.so.2",
+        "/usr/local/cuda/lib64/libnccl.so",
+    ]
+    return next((Path(path) for path in candidates if path and Path(path).exists()), None)
+
+
+def enable_system_nccl_preload_for_wrapper() -> None:
+    if not parse_bool(os.environ.get("TRAIN_WRAPPER_PRELOAD_SYSTEM_NCCL"), True):
+        return
+    nccl_path = find_system_nccl_library()
+    if nccl_path is None:
+        log("WARNING: could not find a system NCCL library to preload before TE-dependent runtime probes.")
+        return
+
+    existing_preload = os.environ.get("LD_PRELOAD", "")
+    preload_parts = [part for part in existing_preload.split() if part]
+    if str(nccl_path) not in preload_parts:
+        os.environ["LD_PRELOAD"] = " ".join([str(nccl_path), *preload_parts])
+    prepend_ld_library_path(nccl_path.parent)
+    log(f"Preloading system NCCL before TE-dependent runtime probes: {nccl_path}")
+
+
 def prepend_runtime_library_path(site_dir: Path) -> None:
     prepend_ld_library_path(
         site_dir / "nvidia" / "nccl" / "lib",
@@ -1287,7 +1319,9 @@ def runtime_dependency_env(site_dir: Path, megatron_dir: Path) -> dict[str, str]
     env = os.environ.copy()
     env["PYTHONNOUSERSITE"] = "1"
     parts = [str(site_dir), str(megatron_dir)]
+    system_nccl_path = find_system_nccl_library()
     library_parts = [
+        system_nccl_path.parent if system_nccl_path else None,
         site_dir / "nvidia" / "nccl" / "lib",
         site_dir / "nvidia" / "cublasmp" / "cu13" / "lib",
     ]
@@ -1297,6 +1331,10 @@ def runtime_dependency_env(site_dir: Path, megatron_dir: Path) -> dict[str, str]
     env["LD_LIBRARY_PATH"] = os.pathsep.join(
         dict.fromkeys(str(path) for path in library_parts if path and path.exists())
     )
+    if system_nccl_path is not None and parse_bool(env.get("TRAIN_WRAPPER_PRELOAD_SYSTEM_NCCL"), True):
+        preload_parts = [part for part in env.get("LD_PRELOAD", "").split() if part]
+        if str(system_nccl_path) not in preload_parts:
+            env["LD_PRELOAD"] = " ".join([str(system_nccl_path), *preload_parts])
     target_bin_dir = site_dir / "bin"
     userbase_bin_dir = site_dir.parent.parent.parent / "bin"
     env["PATH"] = os.pathsep.join(
@@ -1809,6 +1847,8 @@ def install_python_global_requirements(
     cwd: Path | None = None,
     editable: bool = False,
     no_build_isolation: bool = False,
+    no_deps: bool = False,
+    upgrade: bool = False,
 ) -> None:
     if not requirements:
         return
@@ -1825,6 +1865,10 @@ def install_python_global_requirements(
         "--no-cache-dir",
         "--break-system-packages",
     ]
+    if no_deps:
+        command.append("--no-deps")
+    if upgrade:
+        command.append("--upgrade")
     if no_build_isolation:
         command.append("--no-build-isolation")
     for requirement in requirements:
@@ -1832,7 +1876,13 @@ def install_python_global_requirements(
             command.extend(["-e", requirement])
         else:
             command.append(requirement)
-    log(f"Installing global runtime {label} requirements: {' '.join(requirements)}")
+    mode_parts = []
+    if no_deps:
+        mode_parts.append("without dependency resolution")
+    if upgrade:
+        mode_parts.append("with upgrade")
+    mode = f" ({', '.join(mode_parts)})" if mode_parts else ""
+    log(f"Installing global runtime {label} requirements{mode}: {' '.join(requirements)}")
     process = subprocess.run(
         command,
         cwd=str(cwd) if cwd else None,
@@ -2091,6 +2141,15 @@ def download_runtime_apex_wheel(
     return download_runtime_prebuilt_wheel(repo_id, filename, install_root, "Apex")
 
 
+def skip_runtime_apex_liger_bootstrap(
+    prime_rl_required: bool,
+    grpo_required: bool,
+    rlcsd_required: bool,
+    verl_automodel_required: bool,
+) -> bool:
+    return prime_rl_required and not (grpo_required or rlcsd_required or verl_automodel_required)
+
+
 def prepare_runtime_training_dependencies(
     wrapper_args: argparse.Namespace,
     forwarded_args: list[str],
@@ -2105,6 +2164,22 @@ def prepare_runtime_training_dependencies(
     verl_automodel_required = verl_training_fp8_required(forwarded_args)
     prime_rl_required = prime_rl_runtime_dependencies_required(forwarded_args)
     te_required = transformer_engine_runtime_required(forwarded_args)
+    cuda_nvidia_runtime_required = verl_automodel_required or prime_rl_required or te_required
+    skip_apex_liger_bootstrap = skip_runtime_apex_liger_bootstrap(
+        prime_rl_required,
+        grpo_required,
+        rlcsd_required,
+        verl_automodel_required,
+    )
+    if cuda_nvidia_runtime_required:
+        enable_system_nccl_preload_for_wrapper()
+        install_python_global_requirements(
+            verl_nvidia_runtime_requirements(),
+            "NVIDIA CUDA runtime",
+            no_deps=True,
+            upgrade=True,
+        )
+
     if verl_automodel_required:
         nccl_lib = site_dir / "nvidia" / "nccl" / "lib" / "libnccl.so.2"
         if nccl_lib.exists():
@@ -2121,7 +2196,9 @@ def prepare_runtime_training_dependencies(
         patch_runtime_peft_transformer_engine_probe(site_dir)
         patch_runtime_openenv_lazy_imports(site_dir)
     base_stack_required = not prime_rl_required or grpo_required or rlcsd_required or verl_automodel_required or te_required
-    if base_stack_required:
+    if base_stack_required and skip_apex_liger_bootstrap:
+        log("Skipping runtime Apex/Liger bootstrap for Prime-RL; these packages are expected from the image.")
+    if base_stack_required and not skip_apex_liger_bootstrap:
         apex_ok, apex_details = runtime_dependency_probe(site_dir, megatron_dir, module="apex")
         if apex_ok:
             log("Apex runtime import is already available")
@@ -2179,24 +2256,25 @@ def prepare_runtime_training_dependencies(
                     raise
                 log(f"WARNING: Optional Megatron Core runtime setup failed for grpo_fast: {redact_secret(str(exc))}")
 
-        liger_ok, liger_details = runtime_dependency_probe(site_dir, megatron_dir, module="liger")
-        if liger_ok:
-            log("Liger Kernel runtime import is already available")
-        else:
-            if liger_details:
-                log(f"Liger Kernel runtime import unavailable; cloning/installing: {liger_details}")
-            try:
-                ensure_runtime_repo(
-                    settings["liger_repo"],
-                    settings["liger_ref"],
-                    liger_dir,
-                    "Liger-Kernel",
-                )
-                install_python_target(liger_dir, site_dir, "Liger Kernel")
-            except Exception as exc:
-                if not grpo_required:
-                    raise
-                log(f"WARNING: Optional Liger Kernel runtime setup failed for grpo_fast: {redact_secret(str(exc))}")
+        if not skip_apex_liger_bootstrap:
+            liger_ok, liger_details = runtime_dependency_probe(site_dir, megatron_dir, module="liger")
+            if liger_ok:
+                log("Liger Kernel runtime import is already available")
+            else:
+                if liger_details:
+                    log(f"Liger Kernel runtime import unavailable; cloning/installing: {liger_details}")
+                try:
+                    ensure_runtime_repo(
+                        settings["liger_repo"],
+                        settings["liger_ref"],
+                        liger_dir,
+                        "Liger-Kernel",
+                    )
+                    install_python_target(liger_dir, site_dir, "Liger Kernel")
+                except Exception as exc:
+                    if not grpo_required:
+                        raise
+                    log(f"WARNING: Optional Liger Kernel runtime setup failed for grpo_fast: {redact_secret(str(exc))}")
 
     if grpo_required:
         for module, label in (
@@ -2213,10 +2291,16 @@ def prepare_runtime_training_dependencies(
                     f"continuing without it:\n{optional_details}"
                 )
     elif base_stack_required:
-        dependencies_ok, details = runtime_dependency_probe(site_dir, megatron_dir)
-        if not dependencies_ok:
-            raise RuntimeError(f"Runtime Apex/Megatron/Liger import verification failed:\n{details}")
-        log(f"Runtime Apex/Megatron/Liger imports verified:\n{details}")
+        if skip_apex_liger_bootstrap:
+            dependencies_ok, details = runtime_dependency_probe(site_dir, megatron_dir, module="megatron")
+            if not dependencies_ok:
+                raise RuntimeError(f"Runtime Megatron Core import verification failed:\n{details}")
+            log(f"Runtime Megatron Core import verified:\n{details}")
+        else:
+            dependencies_ok, details = runtime_dependency_probe(site_dir, megatron_dir)
+            if not dependencies_ok:
+                raise RuntimeError(f"Runtime Apex/Megatron/Liger import verification failed:\n{details}")
+            log(f"Runtime Apex/Megatron/Liger imports verified:\n{details}")
 
     if grpo_required:
         grpo_ok, grpo_details = runtime_dependency_probe(site_dir, megatron_dir, module="grpo")
@@ -2304,6 +2388,25 @@ def prepare_runtime_training_dependencies(
             no_build_isolation=True,
             cwd=prime_rl_dir,
         )
+        install_python_global_requirements(
+            verl_nvidia_runtime_requirements(),
+            "Prime-RL final NVIDIA CUDA runtime",
+            no_deps=True,
+            upgrade=True,
+        )
+        if te_required:
+            te_ok, te_details = runtime_dependency_probe(
+                site_dir,
+                megatron_dir,
+                module="transformer_engine",
+            )
+            if not te_ok:
+                raise RuntimeError(
+                    "Runtime Transformer Engine import verification failed after Prime-RL package install. "
+                    "This check runs before Prime-RL starts GPU workers.\n"
+                    f"{te_details}"
+                )
+            log(f"Runtime Transformer Engine import verified after Prime-RL package install:\n{te_details}")
         log("Runtime Prime-RL packages installed; skipping import preflight")
 
 
@@ -2335,11 +2438,20 @@ def ensure_runtime_training_dependencies(
     verl_automodel_required = verl_training_fp8_required(forwarded_args)
     prime_rl_required = prime_rl_runtime_dependencies_required(forwarded_args)
     te_required = transformer_engine_runtime_required(forwarded_args)
+    skip_apex_liger_bootstrap = skip_runtime_apex_liger_bootstrap(
+        prime_rl_required,
+        grpo_required,
+        rlcsd_required,
+        verl_automodel_required,
+    )
     if node_rank in (None, 0):
         base_stack_required = not prime_rl_required or grpo_required or rlcsd_required or verl_automodel_required or te_required
         dependency_parts: list[str] = []
         if base_stack_required:
-            dependency_parts.append("Apex, Megatron Core, Liger Kernel")
+            if skip_apex_liger_bootstrap:
+                dependency_parts.append("Megatron Core")
+            else:
+                dependency_parts.append("Apex, Megatron Core, Liger Kernel")
         if te_required:
             dependency_parts.append("Transformer Engine")
         if grpo_required:

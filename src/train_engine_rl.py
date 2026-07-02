@@ -171,6 +171,10 @@ def build_prime_env_config(args: argparse.Namespace) -> dict[str, Any]:
                 "problem_column": args.prime_proof_problem_column,
                 "solution_column": args.prime_proof_solution_column,
                 "max_examples": args.prime_proof_max_examples,
+                "verifiable_dataset_path": args.prime_proof_verifiable_dataset_path,
+                "verifiable_fraction": args.prime_proof_verifiable_fraction,
+                "verifiable_answer_column": args.prime_proof_verifiable_answer_column,
+                "mix_seed": args.prime_proof_mix_seed,
                 "enable_meta_verification": args.prime_proof_enable_meta_verification,
                 "partial_format_score": args.prime_proof_partial_format_score,
                 "require_closed_think": args.prime_proof_require_closed_think,
@@ -617,6 +621,10 @@ def parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
     parser.add_argument("--prime_proof_problem_column", default="auto")
     parser.add_argument("--prime_proof_solution_column", default="auto")
     parser.add_argument("--prime_proof_max_examples", type=int, default=None)
+    parser.add_argument("--prime_proof_verifiable_dataset_path", default=None)
+    parser.add_argument("--prime_proof_verifiable_fraction", type=float, default=0.2)
+    parser.add_argument("--prime_proof_verifiable_answer_column", default="auto")
+    parser.add_argument("--prime_proof_mix_seed", type=int, default=34521)
     parser.add_argument("--prime_proof_judge_backend", default="api", choices=("api", "none"))
     parser.add_argument("--prime_proof_judge_model", default="deepseek/deepseek-v4-pro")
     parser.add_argument("--prime_proof_judge_base_url", default="https://openrouter.ai/api/v1")
