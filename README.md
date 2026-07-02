@@ -1,188 +1,164 @@
-# AIMO Proof Pilot Submission
+# AIMO Proof Pilot
 
-This repository contains the runnable submission code for proof-oriented OLMo3
-training and inference. It supports:
+Public training and container assets for proof-oriented OLMo3 / OLMo3Sink experiments. The main maintained path in this snapshot is Prime-RL OPD training with a DeepSeekMath-V2-style proof environment.
 
-- supervised fine-tuning with OLMo-core and Open-Instruct data conversion,
-- Prime-RL experiments for OLMo3Sink / OPD training,
-- Singularity container builds for cluster execution,
-
-Model weights, large datasets, cache directories, `.sif` images, and private
-credentials are intentionally not stored in this repository.
+Large model weights, checkpoints, caches, `.sif` files, W&B runs, and private credentials are intentionally not committed.
 
 ## Repository Layout
 
 | Path | Purpose |
 |---|---|
-| `src/train.py` | Training wrapper. Fetches runtime updates and dispatches to SFT, Prime-RL, VERL, or operator mode. |
-| `src/train_engine.py` | OLMo-core / Open-Instruct SFT backend and sweep utilities. |
-| `src/train_engine_rl.py` | Prime-RL backend for OLMo3Sink / OPD experiments. |
-| `src/deepseek_math_v2_env.py` | DeepSeekMath-V2-style proof reward environment. |
-| `scripts/` | Build, upload, data-preparation, and operator-client helpers. |
-| `operator_commands/` | Example cluster/Modal commands for reproducible experiments. |
-| `*.def` | Singularity definition files used to build runnable images. |
-| `test.csv` | Tiny smoke-test input. |
-| `imo_data_1959_2024.csv` | Small public proof dataset with `question` and `solution` columns. |
+| `src/train.py` | Training wrapper used inside Docker/Singularity. It can fetch runtime updates and dispatch to SFT, Prime-RL, VERL, or operator mode. |
+| `src/train_engine_rl.py` | Prime-RL launcher and config writer for OLMo3Sink / OPD training. |
+| `src/proof_opd_env.py` | Current OPD environment: proof generation, verifier, meta-verifier, optional refinement, and verifiable-answer metrics. |
+| `src/olmo3_sink/` | OLMo3Sink model, vLLM adapter, FA3 sink attention, and conversion helpers. |
+| `operator_commands/` | Reproducible launch scripts for Modal or cluster/container runs. |
+| `imo_data_1959_2024.csv` | Proof-style IMO data with `question` and `solution` columns. |
+| `astralbench.csv` | Verifiable answer data with `problem` and `answer` columns, mixed into OPD training for boxed-answer accuracy tracking. |
+| `Dockerfile` | CUDA 13 / Torch 2.11 image definition for Prime-RL and VERL experiments. |
+| `*.def`, `scripts/build_sif_and_upload.sh` | Singularity/Apptainer build files and helpers. |
 
 ## Quick Checks
 
 Run from the repository root:
 
 ```bash
-python -m py_compile src/run.py src/train.py src/train_engine.py src/train_engine_rl.py
-python src/run.py --help
-python src/train.py --help
-```
-
-For shell scripts:
-
-```bash
-bash -n scripts/build_sif_and_upload.sh
+python -m py_compile src/train.py src/train_engine.py src/train_engine_rl.py src/proof_opd_env.py
 bash -n operator_commands/prime_rl_opd_4xh200_muon_imo_ctx16384_2train_1policy_1teacher.sh
 ```
 
-## Inference
+The command filename is historical; the current default in that script is a 20,480-token trainer context.
 
-`src/run.py` expects an input CSV with at least:
+## Current Best OPD Pipeline: 4xH200, 20k Context
 
-- `id`
-- `problem`
-
-Example:
+Use:
 
 ```bash
-python src/run.py \
-  --model_path /path/to/model \
-  --input_csv test.csv \
-  --output_csv outputs/predictions.csv \
-  --logdir logs/inference \
-  --num_ctx 65536 \
-  --max_new_tokens 32768 \
-  --temperature 0.7 \
-  --top_p 0.95
+bash operator_commands/prime_rl_opd_4xh200_muon_imo_ctx16384_2train_1policy_1teacher.sh
 ```
 
-The output CSV includes at least `id,prediction`. Extra diagnostic columns may be
-added by the pipeline.
+Default topology:
 
-## SFT Training
-
-The main SFT backend is `olmo_core_sft`. It accepts local JSON/JSONL/Parquet
-datasets. For chat SFT, use a `messages` column containing OpenAI-style chat
-messages. Rows may optionally include a `tool_schema` column for tool-aware chat
-templates.
-
-Example:
-
-```bash
-python src/train.py \
-  --backend olmo_core_sft \
-  --model_path /path/to/olmo3-32b \
-  --dataset_path /path/to/train.parquet \
-  --output_path outputs/sft \
-  --logdir logs/sft \
-  --model_arch olmo3_32b \
-  --num_gpus 8 \
-  --tensor_parallel_degree 8 \
-  --pipeline_parallel_degree 1 \
-  --max_seq_length 65536 \
-  --per_device_batch_size 2 \
-  --gradient_accumulation_steps 4 \
-  --optimizer skip_step_adamw
-```
-
-On multi-node clusters, run one Singularity container per node and let
-`src/train.py` launch internal `torchrun`. The host should provide
-`GLOBAL_RANK`, `WORLD_SIZE`, `MASTER_ADDR`, and `MASTER_PORT`.
-
-## Prime-RL / OLMo3Sink
-
-Prime-RL experiments are launched through `src/train.py --backend prime_rl`.
-The current OLMo3Sink OPD layout uses:
-
-- GPU 0: policy vLLM rollout server,
-- GPU 1-2: trainer with context parallelism `CP=2`,
+- GPU 0: policy vLLM rollout server.
+- GPUs 1-2: trainer, `CP=2`, Ulysses context parallelism.
 - GPU 3: frozen OPD teacher vLLM server.
+- Optimizer: `muon`.
+- Trainer FP8: enabled.
+- Policy and teacher vLLM quantization: FP8.
+- Trainer context length: `20480`.
+- Rollout max completion tokens: `20480`.
+- vLLM max model length: `40960`.
+- vLLM `max_num_batched_tokens`: `16384`.
+- Policy max concurrent sequences: `16`.
+- Teacher max concurrent sequences: `8`.
 
-The current 16k-context IMO smoke command is:
+Default data mix:
+
+- `imo_data_1959_2024.csv` supplies proof-only tasks.
+- `astralbench.csv` supplies verifiable tasks.
+- `PRIME_OPD_VERIFIABLE_DATASET_PATH` selects the verifiable CSV, defaulting to `/workspace/submissions-instructions/astralbench.csv`.
+- `PRIME_OPD_VERIFIABLE_FRACTION=0.20` mixes 20% verifiable rows into the train environment.
+- `PRIME_OPD_VERIFIABLE_MIX_SEED=34521` makes the mixed proof/verifiable ordering reproducible.
+- `PRIME_PROOF_MAX_EXAMPLES=20` keeps the default launch cheap. Increase it for real runs, for example `PRIME_PROOF_MAX_EXAMPLES=1481`.
+
+Example container-style launch:
 
 ```bash
+export PRIME_OPD_MODEL_PATH=/vol/olmo_train_assets/models/opd-32b-deploy/opd-32b-deploy
+export PRIME_OPD_TEACHER_MODEL_PATH="$PRIME_OPD_MODEL_PATH"
+export PRIME_OPD_DATASET_PATH=/workspace/submissions-instructions/imo_data_1959_2024.csv
+export PRIME_OPD_VERIFIABLE_DATASET_PATH=/workspace/submissions-instructions/astralbench.csv
+export PRIME_OPD_VERIFIABLE_FRACTION=0.20
+export PRIME_OPD_VERIFIABLE_MIX_SEED=34521
+export PRIME_PROOF_MAX_EXAMPLES=1481
+export MAX_TRAIN_STEPS=30
+export WANDB_MODE=online
+export WANDB_PROJECT=olmo3-prime-rl
+
 bash operator_commands/prime_rl_opd_4xh200_muon_imo_ctx16384_2train_1policy_1teacher.sh
 ```
 
-Important defaults:
+The script expects `/app/train.py` inside the image and writes outputs/logs under `/vol/olmo_train_assets/`. Mount this repository at `/workspace/submissions-instructions` and mount a writable volume at `/vol/olmo_train_assets`.
 
-- dataset: `imo_data_1959_2024.csv`,
-- columns: `question` and `solution`,
-- context length: `16384`,
-- rollout max completion tokens: `12288`,
-- trainer FP8: enabled,
-- vLLM policy/teacher quantization: FP8,
-- optimizer: Muon.
+At startup, the script prints the proof dataset path, verifiable dataset path, verifiable fraction, mix seed, max example count, context length, and rollout completion-token cap. Check these lines first when validating that a run is using the intended mixer settings.
 
-Override runtime settings with environment variables:
+## OPD Environment
 
-```bash
-PRIME_OPD_CTX_LEN=16384 \
-PRIME_OPD_COMPLETION_TOKENS=8192 \
-MAX_TRAIN_STEPS=1 \
-bash operator_commands/prime_rl_opd_4xh200_muon_imo_ctx16384_2train_1policy_1teacher.sh
-```
+`src/proof_opd_env.py` uses a staged pipeline:
 
-## Docker Build
+1. Proof generation prompt.
+2. Extract `## Solution` from the assistant output.
+3. Verifier prompt over the extracted proof.
+4. Meta-verifier prompt over the verifier analysis.
+5. Optional refinement round if the selected reward is below the early-stop threshold.
 
-`Dockerfile` is self-contained: it clones this public repository during the
-image build, copies `src/` into `/app`, and installs the CUDA training stack.
-This means the file can be shared without also sharing a local checkout.
+For verifiable tasks, the proof-generation prompt additionally asks the model to include one final answer in `\boxed{...}` inside the `## Solution` section. The boxed answer is used only for metrics; the OPD proof/verifier/meta reward path stays unchanged.
+
+Important W&B metrics:
+
+- `proof_opd_reward`: final proof reward used by the environment.
+- `proof_opd_format_score`: format compliance score.
+- `proof_opd_proof_score`: verifier score.
+- `proof_opd_meta_score`: meta-verifier score.
+- `proof_opd_task_is_verifiable`: `1` for AstralBench-style rows, `0` for proof-only rows.
+- `proof_opd_verifiable_accuracy`: `1` if the boxed answer matches, `0` if wrong or missing, `-1` for proof-only rows.
+- `proof_opd_boxed_present`: whether a boxed answer was found in the solution section.
+
+## Data Formats
+
+Proof data should provide one of:
+
+- `question`
+- `problem`
+- `messages` as a fallback source for the first user problem text
+
+Optional `solution` is kept for reference. Verifiable data should provide:
+
+- `problem` or `question`
+- `answer`
+
+`astralbench.csv` follows this format.
+
+## Docker
+
+Build:
 
 ```bash
 DOCKER_BUILDKIT=1 docker build -f Dockerfile -t aimo-proof-pilot:cu130 .
 ```
 
-If you only have the Dockerfile and no build context, build from stdin:
+Run with four H200 GPUs:
 
 ```bash
-DOCKER_BUILDKIT=1 docker build -t aimo-proof-pilot:cu130 - < Dockerfile
+docker run --gpus all --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 \
+  -v "$PWD":/workspace/submissions-instructions \
+  -v /path/to/olmo_train_assets:/vol/olmo_train_assets \
+  -e HF_TOKEN \
+  -e WANDB_API_KEY \
+  -e WANDB_MODE=online \
+  aimo-proof-pilot:cu130 \
+  bash /workspace/submissions-instructions/operator_commands/prime_rl_opd_4xh200_muon_imo_ctx16384_2train_1policy_1teacher.sh
 ```
 
-For private wheel downloads, pass an HF token as a BuildKit secret:
+## Singularity / Apptainer
 
-```bash
-DOCKER_BUILDKIT=1 docker build \
-  --secret id=hf_token,src=/path/to/hf_token.txt \
-  -f Dockerfile -t aimo-proof-pilot:cu130 .
-```
-
-## Singularity Build
-
-Build scripts are in `scripts/`. A typical end-to-end build/upload flow is:
+Build and upload helpers are in `scripts/`:
 
 ```bash
 bash scripts/build_sif_and_upload.sh
 ```
 
-For manual local builds:
+Manual run shape:
 
 ```bash
-singularity build sft-phase1_train_YYYYMMDD.sif sft-phase1_train_YYYYMMDD.def
+singularity run --nv container.sif \
+  --backend prime_rl \
+  --model_path /path/to/model \
+  --dataset_path /path/to/imo_data_1959_2024.csv \
+  --prime_env_id proof-opd-env
 ```
 
-Run a container with:
-
-```bash
-singularity run --nv container.sif --backend olmo_core_sft --help
-```
-
-## Data Formats
-
-Supported training data formats:
-
-- `.json` / `.jsonl` with a `messages` column,
-- `.parquet` with `messages`, `problem`, `question`, or task-specific columns,
-- CSV for Prime-RL proof environments.
-
-For proof RL, `question` or `problem` is used as the prompt. `solution` is used
-when available for evaluation or reward construction.
+For the provided OPD shell script, bind this repo to `/workspace/submissions-instructions` and bind a writable model/output volume to `/vol/olmo_train_assets`.
 
 ## Secrets and Artifacts
 
@@ -190,20 +166,6 @@ Use environment variables for credentials:
 
 - `HF_TOKEN`
 - `WANDB_API_KEY`
-- `OPENROUTER_API_KEY`
+- `OPENROUTER_API_KEY` if using API-judge paths
 
-Do not commit:
-
-- model weights,
-- generated checkpoints,
-- `.sif` images,
-- cache folders,
-- W&B runs,
-- private tokens or presigned URLs.
-
-## Development Notes
-
-Keep entry-point arguments stable: external runners call only `src/run.py` or
-`src/train.py`. Prefer adding new backend-specific logic to dedicated modules
-instead of growing the wrapper. Before pushing changes, run syntax checks and the
-smallest available smoke test.
+Do not commit model weights, checkpoints, generated caches, `.sif` files, W&B directories, private tokens, or presigned URLs.

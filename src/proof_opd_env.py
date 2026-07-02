@@ -388,6 +388,27 @@ def message_content_to_text(content: Any) -> str:
     return str(content)
 
 
+def message_field(message: Any, key: str) -> Any:
+    if isinstance(message, dict):
+        return message.get(key)
+    return getattr(message, key, None)
+
+
+def message_to_text(message: Any) -> tuple[str | None, str]:
+    role = message_field(message, "role")
+    content_text = message_content_to_text(message_field(message, "content")).strip()
+    reasoning_text = message_content_to_text(message_field(message, "reasoning_content")).strip()
+    if str(role or "") == "assistant" and reasoning_text:
+        if "</think>" in reasoning_text.lower():
+            text = reasoning_text
+            if content_text:
+                text = f"{text}\n\n{content_text}"
+        else:
+            text = f"{reasoning_text}</think>{content_text}"
+        return role, text.strip()
+    return role, content_text
+
+
 def completion_to_text(completion: Any) -> str:
     if isinstance(completion, str):
         return completion
@@ -396,9 +417,7 @@ def completion_to_text(completion: Any) -> str:
     assistant_texts: list[str] = []
     all_texts: list[str] = []
     for message in completion:
-        role = message.get("role") if isinstance(message, dict) else getattr(message, "role", None)
-        content = message.get("content") if isinstance(message, dict) else getattr(message, "content", None)
-        text = message_content_to_text(content).strip()
+        role, text = message_to_text(message)
         if not text:
             continue
         all_texts.append(text)
