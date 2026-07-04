@@ -1,0 +1,150 @@
+# syntax=docker/dockerfile:1.7
+# ============================================================================
+# AIMO combined image — prime-rl (OPD) + OLMo-core (SFT) in ONE env, plus the
+# NII-approved remote-shell daemon as a crash-resilient entrypoint.
+#
+# WHY ONE ENV (settled after a long investigation, so it doesn't get re-litigated):
+#   * transformers: NO conflict — prime-rl's 5.6.2 already has Olmo3Config/Olmo3ForCausalLM,
+#     and OLMo-core is unpinned on transformers. (The "olmo-core needs 5.8" belief was wrong;
+#     5.8.1/5.9.0 were just recipe *choices* in the SFT images, never a requirement.)
+#   * CUDA: NO conflict — both are cu128/torch 2.11; OLMo-core reuses prime-rl's flash-attn 2/3/4
+#     and quack/liger; dense Olmo3 SFT needs no grouped_gemm. So it's a near-pure pip install.
+#   * rich: the ONE real conflict — prime-rl needs rich>=14 (via textual>=14.2), OLMo-core's
+#     cached-path caps rich<14. Resolution: keep prime-rl's rich 15 and force cached-path onto it.
+#     Verified empirically (cached_path/olmo_core/textual/prime_rl all import + rich.progress works
+#     on rich 15) and by changelog research (rich 14/15 are additive; the only 15.0 break is
+#     dropping py3.8; cached-path's <14 cap is conservative, not a real incompatibility).
+#
+# RESULT: prime-rl stays bit-for-bit official in /app/.venv; OLMo-core is added to the SAME venv;
+# nothing is installed at runtime; runtime writes go only to /tmp/imochallenge + $HOME (inherited
+# cache umbrella). No second venv/toolkit, no glibc transplant, no SFT recompile.
+#
+# BUILD (context must contain remote-shell/daemon/ — e.g. from the AIMO-proof-pilot root, or copy
+# sft-images/remote-shell/daemon next to this file):
+#   DOCKER_BUILDKIT=1 docker build -f Dockerfile.opd-sft -t chankhavu/aimo-opd-sft:v1 \
+#       --build-arg OPD_IMAGE=chankhavu/aimo-opd:v1 .
+#   (For production, point OPD_IMAGE at the finalized OPD image — 0.24 uv-sync + worker-bug fix.)
+# ============================================================================
+
+ARG OPD_IMAGE=chankhavu/aimo-opd:v1
+FROM ${OPD_IMAGE}
+USER root
+
+# --- OLMo-core into prime-rl's /app/.venv (one env; prime-rl deps UNTOUCHED except rich, restored) ---
+# Minimal training extras only: torchao (fp8), transformers (present), wandb, fa4 (satisfied by
+# prime-rl's flash-attn-4). Deliberately NOT [dion] (Muon; conflicts samsja-vs-microsoft, unused)
+# nor [fla] (linear-attn; conflicts, Olmo3 is standard) nor [beaker] (AI2 cluster infra, N/A on NII).
+ARG OLMO_CORE_REPO=https://github.com/hav4ik/OLMo-core.git
+ARG OLMO_CORE_REF=olmo3-sft
+ARG OLMO_CORE_EXTRAS=torchao,transformers,wandb,fa4
+ARG RICH_VERSION=15.0.0
+RUN --mount=type=secret,id=github_token,required=false set -eux; \
+    git clone --filter=blob:none --depth 1 --branch "${OLMO_CORE_REF}" "${OLMO_CORE_REPO}" /opt/OLMo-core; \
+    uv pip install --python /app/.venv/bin/python --no-cache-dir -e "/opt/OLMo-core[${OLMO_CORE_EXTRAS}]"; \
+    # cached-path downgrades rich to <14 during the install above; restore prime-rl's rich
+    # (verified safe on cached-path's rich.progress usage).
+    uv pip install --python /app/.venv/bin/python --no-cache-dir --no-deps "rich==${RICH_VERSION}"; \
+    # build-time sanity: both stacks coexist in the one venv on the restored rich.
+    /app/.venv/bin/python -c "import importlib.metadata as m; import prime_rl, olmo_core, cached_path, textual; \
+print('one-env OK: prime_rl + olmo_core import; rich', m.version('rich'))"
+
+# --- torchao bump: olmo-core pins 0.15.0, whose C++ ext is incompatible with torch 2.11+cu128
+#     (skips them -> FP8 SFT degraded). 0.17.0's ext loads cleanly. Forced past olmo-core's pin;
+#     torchao is required ONLY by ai2-olmo-core (not prime-rl), so it can't affect the OPD path.
+RUN uv pip install --python /app/.venv/bin/python --no-cache-dir --no-deps "torchao==0.17.0" \
+ && /app/.venv/bin/python -c "import torch, torchao, torchao.ops; import importlib.metadata as m; \
+print('torchao', m.version('torchao'), 'C++ ext OK on torch', torch.__version__)"
+
+# --- Remote-shell daemon (NII-approved, outbound-only) in its OWN tiny venv so it stays up even if
+#     the main env is busy. Config (HF_TOKEN, RELAY_SPACE, CLIENT_ID) is provided at RUNTIME. ---
+COPY remote-shell/daemon /app/remote-shell/daemon
+RUN uv venv /opt/venv-daemon \
+ && uv pip install --python /opt/venv-daemon/bin/python --no-cache-dir -r /app/remote-shell/daemon/requirements.txt
+
+# --- PID 1: never-die supervisor. The container runs INDEFINITELY (only an external SIGKILL /
+# teardown stops it); the daemon is restarted on any crash/exit. A LOUD banner + the daemon's own
+# output go to the container's STDOUT (via tee) so the launcher can see the daemon is up. ---
+COPY <<'EOF' /app/entrypoint.sh
+#!/bin/bash
+set +e
+trap '' TERM INT HUP PIPE QUIT      # ignore graceful signals; only SIGKILL ends this loop
+mkdir -p "${IMO_CACHE_ROOT:-/tmp/imochallenge/cache}" /tmp/imochallenge/logs 2>/dev/null || true
+LOG=/tmp/imochallenge/logs/relay-daemon.log
+announce() {
+    printf '\n============================================================\n'
+    printf '  REMOTE-SHELL DAEMON %s\n' "$1"
+    printf '  client_id = %s\n' "${CLIENT_ID:-$(hostname 2>/dev/null)}"
+    printf '  container runs until killed  |  logs: %s\n' "$LOG"
+    printf '============================================================\n\n'
+}
+announce "STARTING"
+while :; do
+    announce "RUNNING (daemon (re)starting)"
+    /opt/venv-daemon/bin/python /app/remote-shell/daemon/client.py 2>&1 | tee -a "$LOG"
+    printf '[supervisor %s] daemon exited — restart in 5s\n' "$(date -u '+%F %T' 2>/dev/null)" | tee -a "$LOG"
+    sleep 5 2>/dev/null || true
+done
+EOF
+RUN chmod +x /app/entrypoint.sh
+
+# opd-run / opd-status: launch training FULLY DETACHED (setsid+nohup) so it survives daemon
+# crashes/restarts and the shell closing, and stays identifiable + monitorable.
+COPY <<'EOF' /usr/local/bin/opd-run
+#!/bin/bash
+# opd-run <name> <cmd...> — setsid+nohup a command -> /tmp/imochallenge/logs/<name>.log + <name>.pid
+set -euo pipefail
+[ "$#" -ge 2 ] || { echo "usage: opd-run <name> <command...>" >&2; exit 2; }
+name=$1; shift
+run=/tmp/imochallenge/run; logs=/tmp/imochallenge/logs; mkdir -p "$run" "$logs"
+log="$logs/$name.log"; pidf="$run/$name.pid"
+if [ -f "$pidf" ] && kill -0 "$(cat "$pidf" 2>/dev/null || echo -1)" 2>/dev/null; then
+    echo "opd-run: '$name' already running (pid $(cat "$pidf"))" >&2; exit 1
+fi
+setsid bash -c 'echo "[opd-run start $(date -u)] $*"; "$@"; echo "[opd-run exit $? $(date -u)]"' _ "$@" >>"$log" 2>&1 &
+echo $! >"$pidf"
+echo "opd-run: '$name' started (pid $(cat "$pidf"))  log=$log"
+EOF
+COPY <<'EOF' /usr/local/bin/opd-status
+#!/bin/bash
+# opd-status [name] — list detached opd-run jobs (alive/dead + last log lines)
+run=/tmp/imochallenge/run; logs=/tmp/imochallenge/logs; shopt -s nullglob
+if [ "$#" -ge 1 ]; then set -- "$1"; else set --; for f in "$run"/*.pid; do set -- "$@" "$(basename "$f" .pid)"; done; fi
+[ "$#" -gt 0 ] || { echo "no runs under $run"; exit 0; }
+for n in "$@"; do
+    pidf="$run/$n.pid"; log="$logs/$n.log"; pid=$(cat "$pidf" 2>/dev/null || echo '?')
+    if [ "$pid" != '?' ] && kill -0 "$pid" 2>/dev/null; then st=RUNNING; else st=stopped; fi
+    printf '== %-20s [%s] pid=%s\n' "$n" "$st" "$pid"
+    [ -f "$log" ] && tail -n 3 "$log" | sed 's/^/   /'
+done
+EOF
+RUN chmod +x /usr/local/bin/opd-run /usr/local/bin/opd-status
+
+# --- opd-env-sync: git-pull the FAST-CHANGING proof_opd_env into writable /tmp + emit PYTHONPATH.
+#     Deliberately NOT baked (the env/rubric is iterated constantly). Safe because its deps
+#     (verifiers/datasets/openai) ARE baked, so the pull is pure-python glue — none of the
+#     compilation/resolution risk that motivated baking the heavy stack. verifiers resolves the
+#     "proof-opd-env" id by MODULE IMPORT, so PYTHONPATH suffices — no pip install into the
+#     read-only venv. Usage in a relay shell:  eval "$(opd-env-sync)"
+COPY <<'EOF' /usr/local/bin/opd-env-sync
+#!/bin/bash
+set -euo pipefail
+REPO="${OPD_ENV_REPO:-https://github.com/hav4ik/aimo-proof-pilot.git}"
+REF="${OPD_ENV_REF:-main}"
+DEST="${OPD_ENV_DIR:-/tmp/imochallenge/opd-env/aimo-proof-pilot}"
+mkdir -p "$(dirname "$DEST")"
+if [ -d "$DEST/.git" ]; then
+    git -C "$DEST" fetch --depth 1 origin "$REF" >&2
+    git -C "$DEST" checkout -q --force FETCH_HEAD >&2
+else
+    rm -rf "$DEST"; git clone -q --depth 1 --branch "$REF" "$REPO" "$DEST" >&2
+fi
+echo "[opd-env-sync] $REPO@$REF -> $DEST ($(git -C "$DEST" rev-parse --short HEAD))" >&2
+echo "export PYTHONPATH=$DEST/src${PYTHONPATH:+:$PYTHONPATH}"
+EOF
+RUN chmod +x /usr/local/bin/opd-env-sync
+
+# Training runs THROUGH a relay shell session (both stacks share /app/.venv):
+#   eval "$(opd-env-sync)"                                        # pull latest OPD env -> PYTHONPATH
+#   /app/.venv/bin/python -m prime_rl.entrypoints.rl ...          # OPD
+#   /app/.venv/bin/python -m olmo_core... (or the SFT launcher)   # SFT
+ENTRYPOINT ["/app/entrypoint.sh"]
