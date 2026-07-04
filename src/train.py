@@ -151,7 +151,7 @@ DEFAULT_VERL_NVIDIA_RUNTIME_REQUIREMENTS = (
 DEFAULT_PRIME_RL_SOURCE_REQUIREMENTS = (
     # pip does not understand prime-rl's [tool.uv.sources], so direct source
     # dependencies need to be supplied explicitly when installing with pip.
-    "torchtitan @ git+https://github.com/pytorch/torchtitan.git@a1fdd7e",
+    "torchtitan @ git+https://github.com/pytorch/torchtitan.git@23e4dfc",
     "dion @ git+https://github.com/samsja/dion.git@d891eeb",
     (
         "deep-ep @ "
