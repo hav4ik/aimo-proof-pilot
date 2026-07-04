@@ -21,7 +21,7 @@ EXTRA_MODELS="${EXTRA_MODELS:-opd-32b-v33-s150}"
 # ============ 1. download + organize the model bundles ============
 export HF_XET_HIGH_PERFORMANCE=1
 fetch_model() {   # <sub-bundle>
-  local sub="$1" dest="$MODELS_DIR/$sub"
+  local sub="$1"; local dest="$MODELS_DIR/$sub"
   if [ -f "$dest/config.json" ]; then echo "[skip] $sub already at $dest"; return; fi
   echo "[download] $HF_BUNDLE :: $sub/*  ->  $dest"
   hf download --repo-type model --local-dir "$dest" "$HF_BUNDLE" --include "$sub/*"
