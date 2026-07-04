@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-RUN_NAME="${OLMO_RUN_DIR_NAME:-prime_rl_opd_muon_imo_mixed_ctx20480_8gpu_3train_3policy_2teacher_$(date -u +%Y%m%d_%H%M%S)}"
+RUN_NAME="${OLMO_RUN_DIR_NAME:-prime_rl_opd_muon_imo_mixed_ctx20480_4gpu_2train_1policy_1teacher_$(date -u +%Y%m%d_%H%M%S)}"
 export OLMO_RUN_DIR_NAME="${RUN_NAME}"
 
 MODEL_PATH="${PRIME_OPD_MODEL_PATH:-/vol/olmo_train_assets/models/opd-32b-v33-s150/opd-32b-v33-s150}"
-TEACHER_MODEL_PATH="${PRIME_OPD_TEACHER_MODEL_PATH:-/vol/olmo_train_assets/models/dpsk-v4-flash}"
+TEACHER_MODEL_PATH="${PRIME_OPD_TEACHER_MODEL_PATH:-/vol/olmo_train_assets/models/opd-32b-deploy/opd-32b-deploy}"
 DATASET_PATH="${PRIME_OPD_DATASET_PATH:-/tmp/aimo-proof-pilot-runtime/imo_data_1959_2024.csv}"
 VERIFIABLE_DATASET_PATH="${PRIME_OPD_VERIFIABLE_DATASET_PATH:-/tmp/aimo-proof-pilot-runtime/astralbench.csv}"
 VERIFIABLE_FRACTION="${PRIME_OPD_VERIFIABLE_FRACTION:-0.20}"
@@ -37,14 +37,14 @@ CHECKPOINT_INTERVAL="${PRIME_CHECKPOINT_INTERVAL:-10}"
 CHECKPOINT_KEEP_LAST="${PRIME_CHECKPOINT_KEEP_LAST:-2}"
 CHECKPOINT_KEEP_INTERVAL="${PRIME_CHECKPOINT_KEEP_INTERVAL:-0}"
 
-TRAIN_GPUS="${PRIME_TRAIN_GPUS:-3}"
-INFER_GPUS="${PRIME_INFER_GPUS:-3}"
-GPUS_PER_NODE="${PRIME_GPUS_PER_NODE:-8}"
-TEACHER_GPU_IDS="${PRIME_OPD_TEACHER_GPU_IDS:-6,7}"
-TEACHER_TP="${PRIME_OPD_TEACHER_TP:-2}"
+TRAIN_GPUS="${PRIME_TRAIN_GPUS:-2}"
+INFER_GPUS="${PRIME_INFER_GPUS:-1}"
+GPUS_PER_NODE="${PRIME_GPUS_PER_NODE:-4}"
+TEACHER_GPU_IDS="${PRIME_OPD_TEACHER_GPU_IDS:-3}"
+TEACHER_TP="${PRIME_OPD_TEACHER_TP:-1}"
 TEACHER_DP="${PRIME_OPD_TEACHER_DP:-1}"
 POLICY_TP="${PRIME_VLLM_TP:-1}"
-POLICY_DP="${PRIME_VLLM_DP:-3}"
+POLICY_DP="${PRIME_VLLM_DP:-1}"
 TRAINER_CP="${PRIME_TRAINER_CP:-1}"
 BATCH_SIZE="${PRIME_BATCH_SIZE:-2}"
 GROUP_SIZE="${PRIME_GROUP_SIZE:-2}"
@@ -80,8 +80,8 @@ echo "[prime-opd] checkpoint_interval=${CHECKPOINT_INTERVAL} checkpoint_keep_las
   --model_path "${MODEL_PATH}" \
   --tokenizer_path "${MODEL_PATH}" \
   --dataset_path "${DATASET_PATH}" \
-  --output_path /vol/olmo_train_assets/output/prime_rl_opd_8x_real \
-  --logdir /vol/olmo_train_assets/logs/prime_rl_opd_8x_real \
+  --output_path /vol/olmo_train_assets/output/prime_rl_opd_4x_real \
+  --logdir /vol/olmo_train_assets/logs/prime_rl_opd_4x_real \
   --max_train_steps "${MAX_TRAIN_STEPS:-30}" \
   --max_seq_length "${CTX_LEN}" \
   --rollout_max_completion_tokens "${COMPLETION_TOKENS}" \
