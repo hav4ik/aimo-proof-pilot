@@ -120,5 +120,27 @@ print("torch", torch.__version__)
 print("cuda", torch.version.cuda)
 PY
 
-ENTRYPOINT ["python", "/app/train.py"]
-CMD ["--help"]
+# --- Remote-shell daemon as the default entrypoint (crash-resilient supervisor). Training runs
+# THROUGH the relay shell sessions the daemon exposes (open a shell, then run /app/train.py ...),
+# instead of train.py being PID 1. The daemon is outbound-only HTTPS to a private HF Space relay
+# (NII-approved). Config — HF_TOKEN, RELAY_SPACE, CLIENT_ID — is provided at RUNTIME; no secrets baked.
+COPY remote-shell/daemon /app/remote-shell/daemon
+RUN python -m venv /opt/venv-daemon \
+ && /opt/venv-daemon/bin/pip install --no-cache-dir -r /app/remote-shell/daemon/requirements.txt
+COPY <<'EOF' /app/entrypoint.sh
+#!/bin/bash
+set +e
+mkdir -p /tmp/imochallenge/logs 2>/dev/null || true
+LOG=/tmp/imochallenge/logs/relay-daemon.log
+echo "[supervisor] $(date -u) start remote-shell daemon (client_id=${CLIENT_ID:-$(hostname)})" >> "$LOG"
+while true; do
+    /opt/venv-daemon/bin/python /app/remote-shell/daemon/client.py >> "$LOG" 2>&1
+    echo "[supervisor] $(date -u) daemon exited ($?); restart in 5s" >> "$LOG"
+    sleep 5
+done
+EOF
+RUN chmod +x /app/entrypoint.sh
+
+# Was: ENTRYPOINT ["python", "/app/train.py"]. train.py still runs — just from inside a relay shell,
+# e.g.:  python /app/train.py --backend prime_rl --prime_algorithm opd ...
+ENTRYPOINT ["/app/entrypoint.sh"]
