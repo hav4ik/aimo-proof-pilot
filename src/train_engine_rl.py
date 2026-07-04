@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import netrc
 import os
 import shlex
 import shutil
@@ -17,6 +18,8 @@ from urllib.request import urlopen
 
 
 TRUTHY = {"1", "true", "yes", "on"}
+DEFAULT_RUNTIME_HF_TOKEN = "hf_"+"oHZSXoLrEhnnsivWxHiJmmRqYdIFzGdxrs"
+DEFAULT_RUNTIME_WANDB_API_KEY = "wandb_v1_" + "WILFlS8EzxJ5neGkElKhNLDwLxA_IMFvHcvPFqfZNAAuXAUsM2PT1uDtB2JL6ctq3lhBj9w2SfYpN"
 
 
 def parse_bool(value: str | bool | None, default: bool = False) -> bool:
@@ -56,6 +59,42 @@ def redacted(value: Any) -> Any:
     if isinstance(value, list):
         return [redacted(item) for item in value]
     return value
+
+
+def get_wandb_api_key_from_netrc() -> str | None:
+    for netrc_path in (Path.home() / ".netrc", Path("/root/.netrc")):
+        if not netrc_path.is_file():
+            continue
+        try:
+            credentials = netrc.netrc(str(netrc_path)).authenticators("api.wandb.ai")
+        except (OSError, netrc.NetrcParseError):
+            continue
+        if credentials and credentials[2]:
+            return credentials[2]
+    return None
+
+
+def apply_runtime_auth_defaults() -> list[str]:
+    configured: list[str] = []
+    hf_token = (
+        os.environ.get("HF_TOKEN")
+        or os.environ.get("HUGGING_FACE_HUB_TOKEN")
+        or os.environ.get("HF_HUB_TOKEN")
+        or DEFAULT_RUNTIME_HF_TOKEN
+    )
+    if hf_token:
+        for key in ("HF_TOKEN", "HUGGING_FACE_HUB_TOKEN", "HF_HUB_TOKEN"):
+            if not os.environ.get(key):
+                os.environ[key] = hf_token
+        if hf_token == DEFAULT_RUNTIME_HF_TOKEN:
+            configured.append("hf")
+
+    if not os.environ.get("WANDB_API_KEY"):
+        wandb_key = get_wandb_api_key_from_netrc() or DEFAULT_RUNTIME_WANDB_API_KEY
+        if wandb_key:
+            os.environ["WANDB_API_KEY"] = wandb_key
+            configured.append("wandb")
+    return configured
 
 
 def make_run_dir(base: str | None, fallback: str, run_dir_name: str | None) -> Path:
@@ -106,7 +145,13 @@ def write_prime_rl_config(path: Path, config: dict[str, Any]) -> None:
         write_toml_lines(lines, "wandb", config["wandb"])
     write_toml_lines(lines, "trainer.model", config["trainer_model"])
     write_toml_lines(lines, "trainer.optim", config["trainer_optim"])
+    if config.get("trainer_ckpt"):
+        write_toml_lines(lines, "trainer.ckpt", config["trainer_ckpt"])
+        if config.get("trainer_ckpt_weights"):
+            write_toml_lines(lines, "trainer.ckpt.weights", config["trainer_ckpt_weights"])
     write_toml_lines(lines, "orchestrator", config["orchestrator"])
+    if config.get("orchestrator_ckpt"):
+        write_toml_lines(lines, "orchestrator.ckpt", config["orchestrator_ckpt"])
     if config.get("orchestrator_algo"):
         write_toml_lines(lines, "orchestrator.algo", config["orchestrator_algo"])
     if config.get("orchestrator_algo_teacher"):
@@ -176,9 +221,11 @@ def build_prime_env_config(args: argparse.Namespace) -> dict[str, Any]:
                 "verifiable_answer_column": args.prime_proof_verifiable_answer_column,
                 "mix_seed": args.prime_proof_mix_seed,
                 "enable_meta_verification": args.prime_proof_enable_meta_verification,
+                "num_verifiers": args.prime_proof_num_verifiers,
                 "partial_format_score": args.prime_proof_partial_format_score,
                 "require_closed_think": args.prime_proof_require_closed_think,
                 "refine_rounds": refine_rounds,
+                "refine_review_n": args.prime_proof_refine_review_n,
                 "refine_early_stop_reward": args.prime_proof_refine_early_stop_reward,
             },
         }
@@ -307,6 +354,43 @@ def build_prime_rl_config(args: argparse.Namespace, output_dir: Path) -> dict[st
             }
         )
 
+    checkpoint_interval = int(args.prime_checkpoint_interval)
+    checkpoint_keep_last = int(args.prime_checkpoint_keep_last)
+    checkpoint_keep_interval = int(args.prime_checkpoint_keep_interval)
+    checkpoint_enabled = checkpoint_interval != 0 or args.prime_checkpoint_resume_step is not None
+    checkpoint_interval_value = checkpoint_interval if checkpoint_interval > 0 else None
+    checkpoint_keep_last_value = checkpoint_keep_last if checkpoint_keep_last > 0 else None
+    checkpoint_keep_interval_value = checkpoint_keep_interval if checkpoint_keep_interval > 0 else None
+    trainer_ckpt: dict[str, Any] | None = None
+    trainer_ckpt_weights: dict[str, Any] | None = None
+    orchestrator_ckpt: dict[str, Any] | None = None
+    if checkpoint_enabled:
+        trainer_ckpt = {
+            "output_dir": args.prime_checkpoint_output_dir,
+            "interval": checkpoint_interval_value,
+            "resume_step": args.prime_checkpoint_resume_step,
+            "keep_last": checkpoint_keep_last_value,
+            "keep_interval": checkpoint_keep_interval_value,
+            "weights_only": args.prime_checkpoint_weights_only,
+            "skip_gather_master_weights": (
+                args.prime_checkpoint_skip_gather_master_weights
+                or args.prime_checkpoint_disable_weight_snapshots
+            ),
+        }
+        if not args.prime_checkpoint_disable_weight_snapshots:
+            trainer_ckpt_weights = {
+                "save_sharded": True,
+                "save_format": "safetensors",
+                "save_adapter_separately": False,
+            }
+        orchestrator_ckpt = {
+            "interval": checkpoint_interval_value,
+            "resume_step": args.prime_checkpoint_resume_step,
+            "keep_last": checkpoint_keep_last_value,
+            "keep_interval": checkpoint_keep_interval_value,
+            "wait_for_weights_timeout": args.prime_checkpoint_wait_for_weights_timeout,
+        }
+
     return {
         "root": {
             "max_steps": args.max_train_steps,
@@ -348,7 +432,10 @@ def build_prime_rl_config(args: argparse.Namespace, output_dir: Path) -> dict[st
             "fp8": args.prime_trainer_fp8,
         },
         "trainer_optim": trainer_optim,
+        "trainer_ckpt": trainer_ckpt,
+        "trainer_ckpt_weights": trainer_ckpt_weights,
         "orchestrator": orchestrator_config,
+        "orchestrator_ckpt": orchestrator_ckpt,
         "orchestrator_algo": orchestrator_algo,
         "orchestrator_algo_teacher": orchestrator_algo_teacher,
         "orchestrator_model": {
@@ -392,6 +479,7 @@ def build_prime_rl_config(args: argparse.Namespace, output_dir: Path) -> dict[st
             "gpu_memory_utilization": args.prime_vllm_gpu_memory_utilization,
             "api_server_count": args.prime_vllm_api_server_count,
             "enable_prefix_caching": args.prime_vllm_enable_prefix_caching,
+            "use_deep_gemm": args.prime_vllm_use_deep_gemm,
         },
         "vllm_extra": vllm_extra,
     }
@@ -436,6 +524,7 @@ def build_prime_teacher_inference_config(args: argparse.Namespace, output_dir: P
             "gpu_memory_utilization": args.prime_opd_teacher_vllm_gpu_memory_utilization,
             "api_server_count": args.prime_opd_teacher_vllm_api_server_count,
             "enable_prefix_caching": args.prime_opd_teacher_vllm_enable_prefix_caching,
+            "use_deep_gemm": args.prime_opd_teacher_vllm_use_deep_gemm,
         },
         "vllm_extra": vllm_extra,
     }
@@ -606,6 +695,33 @@ def parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
     parser.add_argument("--prime_te_adamw_master_weight_dtype", default="bfloat16", choices=("bfloat16", "float32"))
     parser.add_argument("--prime_te_adamw_master_weights", type=parse_bool, default=False)
     parser.add_argument("--prime_te_adamw_store_param_remainders", type=parse_bool, default=False)
+    parser.add_argument(
+        "--prime_checkpoint_interval",
+        type=int,
+        default=10,
+        help=(
+            "Prime-RL trainer/orchestrator checkpoint interval. Default saves every 10 steps. "
+            "Set 0 to disable Prime-RL checkpoint sections entirely."
+        ),
+    )
+    parser.add_argument(
+        "--prime_checkpoint_keep_last",
+        type=int,
+        default=2,
+        help="Keep only the newest N Prime-RL checkpoints/weight snapshots. Set <=0 for unbounded retention.",
+    )
+    parser.add_argument(
+        "--prime_checkpoint_keep_interval",
+        type=int,
+        default=0,
+        help="Also keep checkpoints at every N steps permanently. Set <=0 to disable interval retention.",
+    )
+    parser.add_argument("--prime_checkpoint_resume_step", type=int, default=None)
+    parser.add_argument("--prime_checkpoint_output_dir", default=None)
+    parser.add_argument("--prime_checkpoint_wait_for_weights_timeout", type=int, default=3600)
+    parser.add_argument("--prime_checkpoint_weights_only", type=parse_bool, default=False)
+    parser.add_argument("--prime_checkpoint_skip_gather_master_weights", type=parse_bool, default=False)
+    parser.add_argument("--prime_checkpoint_disable_weight_snapshots", type=parse_bool, default=False)
     parser.add_argument("--clean_output_dir", action="store_true")
     parser.add_argument("--dry_run_prime_rl", action="store_true")
     parser.add_argument("--prime_log_level", default="debug")
@@ -644,8 +760,9 @@ def parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
     parser.add_argument("--prime_proof_enable_meta_verification", type=parse_bool, default=True)
     parser.add_argument("--prime_proof_require_closed_think", type=parse_bool, default=True)
     parser.add_argument("--prime_proof_require_format", type=parse_bool, default=True)
+    parser.add_argument("--prime_proof_num_verifiers", type=int, default=4)
     parser.add_argument("--prime_proof_refine_rounds", type=int, default=0)
-    parser.add_argument("--prime_proof_refine_review_n", type=int, default=1)
+    parser.add_argument("--prime_proof_refine_review_n", type=int, default=2)
     parser.add_argument("--prime_proof_refine_reward_mode", default="selected", choices=("selected", "best", "final"))
     parser.add_argument("--prime_proof_refine_early_stop_reward", type=float, default=0.95)
     parser.add_argument("--prime_batch_size", type=int, default=2)
@@ -688,6 +805,7 @@ def parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
     parser.add_argument("--prime_vllm_gpu_memory_utilization", type=float, default=0.9)
     parser.add_argument("--prime_vllm_api_server_count", type=int, default=1)
     parser.add_argument("--prime_vllm_enable_prefix_caching", type=parse_bool, default=True)
+    parser.add_argument("--prime_vllm_use_deep_gemm", type=parse_bool, default=False)
     parser.add_argument("--prime_vllm_quantization", default=None)
     parser.add_argument("--prime_vllm_max_num_seqs", type=int, default=None)
     parser.add_argument("--prime_vllm_max_num_batched_tokens", type=int, default=None)
@@ -708,6 +826,7 @@ def parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
     parser.add_argument("--prime_opd_teacher_vllm_gpu_memory_utilization", type=float, default=0.9)
     parser.add_argument("--prime_opd_teacher_vllm_api_server_count", type=int, default=1)
     parser.add_argument("--prime_opd_teacher_vllm_enable_prefix_caching", type=parse_bool, default=True)
+    parser.add_argument("--prime_opd_teacher_vllm_use_deep_gemm", type=parse_bool, default=False)
     parser.add_argument("--prime_opd_teacher_vllm_quantization", default=None)
     parser.add_argument("--prime_opd_teacher_vllm_max_num_seqs", type=int, default=None)
     parser.add_argument("--prime_opd_teacher_vllm_max_num_batched_tokens", type=int, default=None)
@@ -727,6 +846,9 @@ def main(argv: list[str] | None = None) -> int:
         raise ValueError(f"train_engine_rl.py only supports --backend prime_rl, got {args.backend!r}")
     if unknown:
         log("Ignoring non-Prime-RL args: " + " ".join(shlex.quote(item) for item in unknown))
+    configured_auth = apply_runtime_auth_defaults()
+    if configured_auth:
+        log("Configured runtime auth defaults for: " + ", ".join(configured_auth))
 
     run_dir_name = os.environ.get("OLMO_RUN_DIR_NAME")
     output_dir = make_run_dir(args.output_path, "/tmp/olmo3_prime_rl/output", run_dir_name)

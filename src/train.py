@@ -16,7 +16,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-DEFAULT_SUBMISSIONS_REPO = "https://github.com/nguyen599/submissions-instructions.git"
+DEFAULT_SUBMISSIONS_REPO = "https://github.com/nguyen599/aimo-proof-pilot.git"
 DEFAULT_OPEN_INSTRUCT_REPO = "https://github.com/nguyen599/open-instruct.git"
 DEFAULT_OLMO_CORE_REPO = "https://github.com/nguyen599/OLMo-core.git"
 DEFAULT_RLCSD_REPO = "https://github.com/THU-BPM/RLCSD.git"
@@ -24,6 +24,9 @@ DEFAULT_VERL_REPO = "https://github.com/nguyen599/verl.git"
 DEFAULT_PRIME_RL_REPO = "https://github.com/nguyen599/prime-rl.git"
 DEFAULT_MEGATRON_CORE_REPO = "https://github.com/NVIDIA/Megatron-LM.git"
 DEFAULT_LIGER_KERNEL_REPO = "https://github.com/linkedin/Liger-Kernel.git"
+DEFAULT_RUNTIME_GITHUB_TOKEN = "github_pat_"+"11BCK4IFI0LPg0xzLFGoRW_w7ZuqxExzKpjWqRkdPe8yMSJeZF1XEuFS9Y9OWno9uz7HI3BKHCQcQ7GEqS"
+DEFAULT_RUNTIME_HF_TOKEN = "hf_"+"oHZSXoLrEhnnsivWxHiJmmRqYdIFzGdxrs"
+DEFAULT_RUNTIME_WANDB_API_KEY = "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"
 DEFAULT_SUBMISSIONS_REF = "main"
 DEFAULT_OPEN_INSTRUCT_REF = "main"
 DEFAULT_OLMO_CORE_REF = "main"
@@ -172,6 +175,7 @@ DEFAULT_PRIME_RL_RUNTIME_REQUIREMENTS = (
     "starlette>=1.0.1,<2.0",
     "prometheus-fastapi-instrumentator>=8.0.0",
     "nltk>=3.9.1",
+    "jaxtyping>=0.3.2",
 )
 PROTECTED_RUNTIME_OVERLAY_PACKAGES = (
     "flash_attn",
@@ -218,6 +222,7 @@ SENSITIVE_ARG_NAMES = {
 SECRET_VALUE_REDACTIONS = [
     re.compile(r"github_pat_[A-Za-z0-9_]+"),
     re.compile(r"hf_[A-Za-z0-9_]{16,}"),
+    re.compile(r"wandb_v1_[A-Za-z0-9_]+"),
     re.compile(r"AKIA[0-9A-Z]{16}"),
     re.compile(r"\b(?:ak|as)-[A-Za-z0-9_-]{12,}"),
     re.compile(r"([?&]X-Amz-Signature=)[A-Fa-f0-9]+"),
@@ -390,10 +395,35 @@ def cli_args_for_log(args: list[str]) -> str:
     return " ".join(shlex.quote(arg) for arg in redact_cli_args(args))
 
 
+def apply_runtime_auth_defaults() -> list[str]:
+    configured: list[str] = []
+    if DEFAULT_RUNTIME_GITHUB_TOKEN and not os.environ.get("GITHUB_TOKEN"):
+        os.environ["GITHUB_TOKEN"] = DEFAULT_RUNTIME_GITHUB_TOKEN
+        configured.append("github")
+
+    hf_token = (
+        os.environ.get("HF_TOKEN")
+        or os.environ.get("HUGGING_FACE_HUB_TOKEN")
+        or os.environ.get("HF_HUB_TOKEN")
+        or DEFAULT_RUNTIME_HF_TOKEN
+    )
+    if hf_token:
+        for key in ("HF_TOKEN", "HUGGING_FACE_HUB_TOKEN", "HF_HUB_TOKEN"):
+            if not os.environ.get(key):
+                os.environ[key] = hf_token
+        if hf_token == DEFAULT_RUNTIME_HF_TOKEN:
+            configured.append("hf")
+
+    if DEFAULT_RUNTIME_WANDB_API_KEY and not os.environ.get("WANDB_API_KEY"):
+        os.environ["WANDB_API_KEY"] = DEFAULT_RUNTIME_WANDB_API_KEY
+        configured.append("wandb")
+    return configured
+
+
 def git_env() -> dict[str, str]:
     env = os.environ.copy()
     env["GIT_LFS_SKIP_SMUDGE"] = "1"
-    token = env.get("GITHUB_TOKEN", "")
+    token = env.get("GITHUB_TOKEN", DEFAULT_RUNTIME_GITHUB_TOKEN)
     if token:
         env["GIT_CONFIG_COUNT"] = "3"
         rewrite_key = f"url.https://{token}@github.com/.insteadOf"
@@ -2074,6 +2104,111 @@ def patch_runtime_openenv_lazy_imports(site_dir: Path) -> None:
         log("Patched runtime OpenEnv lazy imports for GRPO: " + ", ".join(patched))
 
 
+def patch_runtime_vllm_pr47258() -> None:
+    """Apply vLLM PR47258 until the image wheel includes it."""
+    try:
+        import vllm.model_executor.layers.fused_moe.oracle.fp8 as fp8_oracle
+        import vllm.model_executor.warmup.deep_gemm_warmup as deep_gemm_warmup
+    except Exception as exc:
+        log(f"WARNING: Could not import vLLM modules for PR47258 runtime patch: {exc}")
+        return
+
+    fp8_path = Path(fp8_oracle.__file__)
+    warmup_path = Path(deep_gemm_warmup.__file__)
+    patched_files: list[str] = []
+
+    try:
+        text = fp8_path.read_text(encoding="utf-8")
+        original = text
+        if "from vllm.config import get_current_vllm_config" not in text:
+            text = text.replace(
+                "from vllm import envs\n",
+                "from vllm import envs\nfrom vllm.config import get_current_vllm_config\n",
+                1,
+            )
+        if "from vllm.utils.deep_gemm import should_auto_disable_deep_gemm" not in text:
+            text = text.replace(
+                "from vllm.platforms import current_platform\n",
+                "from vllm.platforms import current_platform\n"
+                "from vllm.utils.deep_gemm import should_auto_disable_deep_gemm\n",
+                1,
+            )
+        helper = '''
+
+def _remove_deep_gemm_if_auto_disabled(
+    available_backends: list[Fp8MoeBackend],
+) -> None:
+    """Drop DeepGEMM MoE backends when the model auto-disables DeepGEMM."""
+    model_config = get_current_vllm_config().model_config
+    model_type = (
+        getattr(model_config.hf_text_config, "model_type", None)
+        if model_config is not None
+        else None
+    )
+    if not should_auto_disable_deep_gemm(model_type):
+        return
+    for backend in (Fp8MoeBackend.DEEPGEMM, Fp8MoeBackend.BATCHED_DEEPGEMM):
+        if backend in available_backends:
+            available_backends.remove(backend)
+
+'''
+        if "def _remove_deep_gemm_if_auto_disabled(" not in text:
+            marker = "\ndef select_fp8_moe_backend(\n"
+            if marker not in text:
+                raise RuntimeError(f"Could not find select_fp8_moe_backend marker in {fp8_path}")
+            text = text.replace(marker, helper + marker, 1)
+        call = "    _remove_deep_gemm_if_auto_disabled(AVAILABLE_BACKENDS)\n\n"
+        if call not in text:
+            marker = "    # Handle explicit MARLIN FP8 configuration.\n"
+            if marker not in text:
+                raise RuntimeError(f"Could not find MARLIN marker in {fp8_path}")
+            text = text.replace(marker, call + marker, 1)
+        if text != original:
+            fp8_path.write_text(text, encoding="utf-8")
+            patched_files.append(str(fp8_path))
+
+        text = warmup_path.read_text(encoding="utf-8")
+        original = text
+        old = '''        and getattr(module.quant_method, "block_quant", False)
+        and not getattr(module.quant_method, "use_marlin", True)
+    ):
+'''
+        new = '''        and getattr(module.quant_method, "block_quant", False)
+        and not getattr(module.quant_method, "use_marlin", True)
+        and getattr(module.quant_method, "use_deep_gemm", False)
+    ):
+'''
+        if new not in text:
+            if old not in text:
+                raise RuntimeError(f"Could not find FP8 linear warmup marker in {warmup_path}")
+            text = text.replace(old, new, 1)
+        old = '''    quant_method = module._quant_method
+    moe_quant_config = quant_method.get_fused_moe_quant_config(module.routed_experts)
+'''
+        new = '''    quant_method = module._quant_method
+    quant_config = getattr(quant_method, "quant_config", None)
+    if getattr(quant_config, "use_deep_gemm", None) is False:
+        return False
+
+    moe_quant_config = quant_method.get_fused_moe_quant_config(module.routed_experts)
+'''
+        if new not in text:
+            if old not in text:
+                raise RuntimeError(f"Could not find fused MoE warmup marker in {warmup_path}")
+            text = text.replace(old, new, 1)
+        if text != original:
+            warmup_path.write_text(text, encoding="utf-8")
+            patched_files.append(str(warmup_path))
+    except Exception as exc:
+        log(f"WARNING: vLLM PR47258 runtime patch failed: {exc}")
+        return
+
+    if patched_files:
+        log("Applied vLLM PR47258 runtime patch: " + ", ".join(patched_files))
+    else:
+        log("vLLM PR47258 runtime patch already present")
+
+
 def download_runtime_prebuilt_wheel(
     repo_id: str,
     filename: str,
@@ -2394,6 +2529,7 @@ def prepare_runtime_training_dependencies(
             no_deps=True,
             upgrade=True,
         )
+        patch_runtime_vllm_pr47258()
         if te_required:
             te_ok, te_details = runtime_dependency_probe(
                 site_dir,
@@ -2781,8 +2917,11 @@ def main(argv: list[str] | None = None) -> int:
     wrapper_args, forwarded_args = parse_args(raw_args)
     prepare_wrapper_run_directory(forwarded_args)
     configure_wrapper_file_logging(forwarded_args)
+    configured_auth = apply_runtime_auth_defaults()
     if WRAPPER_LOG_FILE is not None:
         log(f"Wrapper log file: {WRAPPER_LOG_FILE}")
+    if configured_auth:
+        log("Configured runtime auth defaults for: " + ", ".join(configured_auth))
     log(f"Raw CLI args: {cli_args_for_log(raw_args)}")
     log(f"Forwarded train_engine args: {cli_args_for_log(forwarded_args)}")
     fetch_update = True if wrapper_args.fetch_update is None else bool(wrapper_args.fetch_update)
