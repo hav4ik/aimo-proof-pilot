@@ -359,6 +359,11 @@ def build_prime_rl_config(args: argparse.Namespace, output_dir: Path) -> dict[st
         wandb_config = {
             "project": args.wandb_project,
             "name": args.wandb_name,
+            "log_extras": {
+                "samples": True,
+                "interval": max(1, int(args.prime_wandb_samples_interval)),
+                "sample_ratio": args.prime_wandb_samples_ratio,
+            },
         }
 
     orchestrator_config = {
@@ -908,6 +913,18 @@ def parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
     parser.add_argument("--wandb_mode", default="online")
     parser.add_argument("--wandb_project", default="olmo3-prime-rl")
     parser.add_argument("--wandb_name", default=None)
+    parser.add_argument(
+        "--prime_wandb_samples_interval",
+        type=int,
+        default=1,
+        help="Prime-RL W&B train sample table logging interval. Default logs every step.",
+    )
+    parser.add_argument(
+        "--prime_wandb_samples_ratio",
+        type=float,
+        default=None,
+        help="Optional Prime-RL W&B train sample sampling ratio. None uses Prime-RL defaults.",
+    )
     args, unknown = parser.parse_known_args(argv)
     return args, unknown
 
