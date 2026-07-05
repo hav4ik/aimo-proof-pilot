@@ -202,7 +202,7 @@ EOF
     chmod +x /usr/local/bin/opd-run /usr/local/bin/opd-status
 
 %test
-    set -euo pipefail
+    set -eu
     export PYTHONDONTWRITEBYTECODE=1
     python - <<'PY'
 import ast
