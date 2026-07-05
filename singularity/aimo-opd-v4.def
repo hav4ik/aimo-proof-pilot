@@ -1,0 +1,63 @@
+# Singularity/Apptainer definition for the AIMO proof-pilot OPD container — v4 (secrets baked).
+#
+# Bootstraps the LOCAL docker image (chankhavu/aimo-proof-pilot:v4) and mirrors its ENTRYPOINT as the
+# %runscript, so `singularity run <sif>` == the container's crash-resilient remote-shell daemon
+# supervisor (boot preflight smoke test -> daemon forever). The docker image's ENV is inherited.
+#
+# SECRETS ARE BAKED (NII requires them in the container). %files copies opd_secrets.env -> /.opd_secrets.env,
+# and %environment exports each var (HF_TOKEN / WANDB_API_KEY / GITHUB_TOKEN) at container start — but only
+# if NOT already set, so a runtime --env value still wins. The daemon, training, and smoke test read them.
+#   >>> opd_secrets.env is NOT committed (gitignored) and this .sif MUST NOT be pushed to any shared/public
+#       registry — it carries live credentials. Keep it local to the NII transfer. <<<
+#
+# Set from outside per node (NII injects these; NOT baked): WORLD_SIZE, GLOBAL_RANK, MASTER_ADDR, MASTER_PORT.
+# Bind a BIG host dir to /tmp (prime-rl fetch + caches + checkpoints) and bind $HOME.
+#
+# Build (apptainer 1.5.1's mksquashfs SIGSEGVs on this ~35GB rootfs — use the workaround script):
+#   printf 'HF_TOKEN=%s\nWANDB_API_KEY=%s\nGITHUB_TOKEN=%s\n' "$HF" "$WB" "$GH" > opd_secrets.env
+#   bash build_opd_sif.sh aimo-opd-v4.sif chankhavu/aimo-proof-pilot:v4 aimo-opd-v4.def
+#
+# Run on NII/Singularity (creds baked; only topology + binds needed):
+#   singularity run --nv --containall \
+#     --bind /scratch/$USER/opd:/tmp --bind $HOME \
+#     --env WORLD_SIZE=1,GLOBAL_RANK=0,MASTER_ADDR=127.0.0.1,MASTER_PORT=29400,CLIENT_ID=nii-node \
+#     aimo-opd-v4.sif
+# Preflight only (validate a node before joining a run):
+#   singularity exec --nv --containall --bind /scratch/$USER/opd:/tmp aimo-opd-v4.sif python /app/smoke_test_opd.py
+
+Bootstrap: docker-daemon
+From: chankhavu/aimo-proof-pilot:v4
+
+%files
+    opd_secrets.env /.opd_secrets.env
+
+%environment
+    # NII requires baked secrets. Export each KEY=VALUE only if that var is NOT already set, so a runtime
+    # --env override still wins. Skips blanks/comments. POSIX sh (Singularity sources this at startup).
+    if [ -r /.opd_secrets.env ]; then
+        while IFS='=' read -r _k _v; do
+            case "$_k" in ''|\#*) continue ;; esac
+            if [ -z "$(printenv "$_k" 2>/dev/null)" ]; then export "$_k=$_v"; fi
+        done < /.opd_secrets.env
+        unset _k _v
+    fi
+
+%runscript
+    # Mirror the docker ENTRYPOINT: crash-resilient supervisor -> boot smoke test -> remote-shell daemon
+    # forever. Training runs THROUGH the daemon's relay shells (train.py fetches prime-rl into /tmp).
+    exec /app/entrypoint.sh "$@"
+
+%labels
+    org.opd.entrypoint /app/entrypoint.sh
+    org.opd.base chankhavu/aimo-proof-pilot:v4
+    org.opd.version v4
+    org.opd.secrets baked
+    org.opd.smoke_test /app/smoke_test_opd.py
+
+%help
+    AIMO proof-pilot OPD container (v4, secrets baked). Entrypoint = crash-resilient remote-shell daemon:
+    on boot it runs /app/smoke_test_opd.py (env/system preflight) and prints a PASS/WARN/FAIL report, then
+    runs the daemon forever (never gated by a FAIL). Creds (HF/WANDB/GITHUB) are baked; NII injects only the
+    topology vars (WORLD_SIZE/GLOBAL_RANK/MASTER_ADDR/MASTER_PORT). Bind a big host dir to /tmp + bind $HOME.
+    train.py runtime-fetches nguyen599/prime-rl into /tmp; operator scripts at /opt/aimo-proof-pilot/operator_commands.
+    This .sif carries live credentials — never push it to a shared registry.
