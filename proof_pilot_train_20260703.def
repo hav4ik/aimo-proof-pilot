@@ -1,6 +1,12 @@
 Bootstrap: docker
 From: chankhavu/aimo-proof-pilot:v4
 
+%files
+    # NII requires secrets baked into the .sif (they cannot inject creds at runtime). opd_secrets.env is
+    # gitignored and must never be committed; the built .sif carries live creds so it must never be pushed
+    # to a shared/public registry. Copy opd_secrets.env.example -> opd_secrets.env and fill in real values.
+    opd_secrets.env /.opd_secrets.env
+
 %environment
     export SUBMISSIONS_REPO=https://github.com/nguyen599/aimo-proof-pilot.git
     export SUBMISSIONS_REF=main
@@ -52,10 +58,11 @@ From: chankhavu/aimo-proof-pilot:v4
     export GDRCOPY_HOME=/root/gdrcopy
     export PATH=/usr/local/cuda-13.0/bin:/usr/local/cuda/bin:/usr/local/nvidia/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     export LD_LIBRARY_PATH=/usr/local/cudnn/lib:/usr/local/cuda-13.0/lib64:/usr/local/ucx/lib:/opt/nvidia/nvda_nixl/lib/x86_64-linux-gnu:/opt/nvidia/nvda_nixl/lib64:/usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH}
-    # Pass secrets at build/runtime via the environment; do not commit them.
-    export HF_TOKEN="${HF_TOKEN:-}"
-    export WANDB_API_KEY="${WANDB_API_KEY:-}"
-    export GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+    # Secrets baked into the .sif (NII requires them; they don't inject creds at runtime). Each defaults to
+    # the value baked in /.opd_secrets.env (via %files), but a runtime --env override still wins.
+    export HF_TOKEN="${HF_TOKEN:-$(sed -n 's/^HF_TOKEN=//p' /.opd_secrets.env 2>/dev/null | head -1)}"
+    export WANDB_API_KEY="${WANDB_API_KEY:-$(sed -n 's/^WANDB_API_KEY=//p' /.opd_secrets.env 2>/dev/null | head -1)}"
+    export GITHUB_TOKEN="${GITHUB_TOKEN:-$(sed -n 's/^GITHUB_TOKEN=//p' /.opd_secrets.env 2>/dev/null | head -1)}"
 
 
 %post
