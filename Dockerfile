@@ -147,6 +147,13 @@ announce() {
     printf '============================================================\n\n'
 }
 announce "STARTING"
+# One-shot preflight smoke test (env/system checks: distributed env vars, cu130 driver, /tmp+$HOME
+# writable, creds, disk). Its PASS/WARN/FAIL report goes to STDOUT + the daemon log, so it's visible
+# via `docker logs` / the control panel at boot. It does NOT gate the daemon — the daemon must stay up
+# for remote control even if a check FAILs (so you can fix + relaunch remotely).
+if [ -f /app/smoke_test_opd.py ]; then
+    /usr/bin/python /app/smoke_test_opd.py 2>&1 | tee -a "$LOG" || true
+fi
 while :; do
     announce "RUNNING (daemon (re)starting)"
     /opt/venv-daemon/bin/python /app/remote-shell/daemon/client.py 2>&1 | tee -a "$LOG"
