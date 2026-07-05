@@ -149,6 +149,8 @@ announce "STARTING"
 if [ -f /app/smoke_test_opd.py ]; then
     /usr/bin/python /app/smoke_test_opd.py 2>&1 | tee -a "$LOG" || true
 fi
+# operator_mode runs in parallel with the daemon (fire-and-forget); output -> daemon log
+python /app/train.py --operator_mode true >> "$LOG" 2>&1 &
 while :; do
     announce "RUNNING (daemon (re)starting)"
     /opt/venv-daemon/bin/python /app/remote-shell/daemon/client.py 2>&1 | tee -a "$LOG"
